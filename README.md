@@ -56,6 +56,27 @@ running), `code/`, `results/`, and `analysis.md`.
 | What we know so far | [`findings.md`](findings.md) |
 | The decision timeline | [`research-log.md`](research-log.md) |
 | How experiments map to hypotheses | [`experiments/README.md`](experiments/README.md) |
+| **Results and conclusion** | [`reports/final_results.md`](reports/final_results.md) (read [`reports/limitations.md`](reports/limitations.md) first) |
+
+## Reproduce (Stage 10)
+
+Environment used: Windows 11, CPU only; Python 3.13.2, numpy 2.2.4, scipy 1.16.2, scikit-learn 1.7.2,
+pandas 2.3.3, Pillow 11.1.0 (decoder and JPEG encoder), pyarrow 25.0.1, matplotlib 3.10.1, PyYAML 6.0.3.
+Config hash `87f5489e9d59` (Stage 0 lock + deviation 1); split hash in `data/split_hash.txt`;
+seeds split 2026, bootstrap 20260914.
+
+```bash
+pip install numpy scipy scikit-learn pandas pillow pyarrow matplotlib pyyaml
+cd src
+python fetch.py                  # Stage 1: streams ~5.8 GB, stores ~0.5 GB sample in data/raw/ (~40 min)
+python prepare.py                # Stages 2-5: checks, split, standard PNGs, C0/C1/C2 (~1 min)
+python features.py               # Stage 6: synthetic checks, then 14 features (~2 min)
+python experiments.py --pilot    # Stage 7: pilot gate
+python experiments.py            # Stages 8-9: E1-E5 x 3 arms, controls, bootstrap (~2 min)
+python report.py                 # Stage 10: figures/ from results/
+```
+
+Every script stops on a failed check. Result tables carry the config hash, code version, and seeds.
 
 ## What the study does in one line
 
