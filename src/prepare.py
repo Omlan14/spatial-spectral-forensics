@@ -28,8 +28,10 @@ def phash(im):
 
 
 def exclusion_reason(im):
-    if im.mode not in ("RGB", "L") or "transparency" in im.info:
-        return f"mode_{im.mode}_or_transparency"
+    if "transparency" in im.info or (im.mode in ("RGBA", "LA") and im.getchannel("A").getextrema()[0] < 255):
+        return "transparency"                                       # opaque alpha (all 255) is not transparency
+    if im.mode not in ("RGB", "L", "RGBA", "LA"):
+        return f"mode_{im.mode}"
     icc = im.info.get("icc_profile")
     if icc and "srgb" not in ImageCms.getProfileDescription(ImageCms.ImageCmsProfile(io.BytesIO(icc))).lower():
         return "non_srgb_profile"
