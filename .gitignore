@@ -33,13 +33,16 @@ __temp_skills_repo/
 
 # ---------------------------------------------------------------------------
 # Pipeline artefacts that are regenerated from the locked config + seeds
-# (experimental-pipeline.md, Sections 2 and 8). Kept out of version control so
-# the repository stays lightweight and every number is reproducible from source.
-# Source code, config, CSV result tables, figure scripts and figures are tracked.
+# (src/experimental-pipeline.md, Sections 2 and 8). Kept out of version control
+# so the repository stays lightweight and every number is reproducible from
+# source. Source code, config, and small CSV/JSON result tables are tracked.
 # ---------------------------------------------------------------------------
 /data/raw/
 *.parquet
 /models/
-/to_human/
-/research-state.yaml
-/research-log.md
+
+# ---------------------------------------------------------------------------
+# Generated progress reports for human review (regenerable)
+# ---------------------------------------------------------------------------
+/to_human/*
+!/to_human/README.md

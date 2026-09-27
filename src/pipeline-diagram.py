@@ -329,9 +329,14 @@ def main():
     print(f"Figure size: {FIG_W} x {FIG_H} inches "
           f"(fits one A4/Letter page with wide margins).")
 
-    fig.savefig("pipeline-diagram.png", dpi=400, facecolor="white")
-    fig.savefig("pipeline-diagram.pdf", facecolor="white")
-    print("Wrote pipeline-diagram.png (400 dpi) and pipeline-diagram.pdf")
+    # Write next to this script, independent of the caller's working directory.
+    from pathlib import Path
+    here = Path(__file__).resolve().parent
+    png_path = here / "pipeline-diagram.png"
+    pdf_path = here / "pipeline-diagram.pdf"
+    fig.savefig(png_path, dpi=400, facecolor="white")
+    fig.savefig(pdf_path, facecolor="white")
+    print(f"Wrote {png_path.name} (400 dpi) and {pdf_path.name}")
 
 
 if __name__ == "__main__":

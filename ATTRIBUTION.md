@@ -31,5 +31,5 @@ their upstream licences, and the top-level MIT licence does **not** apply to the
 
 The image data referenced by the pipeline (GenImage, with AI-GenBench as a fallback)
 is **not** redistributed in this repository. It is downloaded at run time from its
-original source under that dataset's own terms; see `experimental-pipeline.md`,
-Stage 1, and `literature-review.md` references [13] and [14].
+original source under that dataset's own terms; see `src/experimental-pipeline.md`,
+Stage 1, and `literature/literature-review.md` references [13] and [14].
