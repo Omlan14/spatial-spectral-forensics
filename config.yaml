@@ -47,4 +47,12 @@ unseen_generator: sd_v1_4                  # E4/E5: its fakes are removed from t
 seeds: {split: 2026, bootstrap: 20260914}
 bootstrap_rounds: 1000
 
-deviations: []
+shuffle_rounds: 200                        # see deviation 1
+shuffle_mean_tolerance: 0.03               # see deviation 1
+
+deviations:
+  - date: "2026-09-27"
+    id: 1
+    what: "Control check 3 (shuffled labels) repeats the shuffle 200 times per experiment and passes if the MEAN test AUROC is within 0.5 +/- 0.03; the SD is reported."
+    why: "The first full run stopped on a single-shuffle check (E1 0.623, E2 0.268). Diagnosis (results/diagnostics/shuffle_control.md): features and labels verified aligned; over 200 shuffles mean 0.512 / 0.514 with SD 0.09, matching untrained random directions. A single shuffle is one random direction and cannot gate. Approved by the project owner before the rerun."
+    affects: "Control table only. No feature, split, classifier, or metric changed. The pilot (Stage 7) used a single shuffle and passed its wider tolerance."

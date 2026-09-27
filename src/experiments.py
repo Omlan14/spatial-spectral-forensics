@@ -83,24 +83,33 @@ def run_experiments(D):
                            "coef": dict(zip(cols, m.coef_[0].round(6))), "scaler_mean": list(sc.mean_),
                            "scaler_scale": list(sc.scale_), **TRACE})
         # control checks (Section 6): they diagnose, never fix
-        ctrl = {"always_guess": (np.zeros(len(te)), np.zeros(len(te), int))}
-        for name, cols, ytr in [("history_only", ["h_is_jpeg", "h_quality", "h_w", "h_h"], tr.y),
-                                ("shuffled_labels", PIXEL + FREQ, rng.permutation(tr.y.values)),
-                                ("pre_receipt_history (exploratory)", ["o_is_jpeg", "o_w", "o_h"], tr.y)]:
-            sc, m, C, thr, _ = fit(tr, va, cols, ytr)
-            s = m.decision_function(sc.transform(te[cols]))
-            ctrl[name] = (s, (s >= thr).astype(int))
-        for name, (s, p) in ctrl.items():
-            controls.append({"exp": exp, "control": name, "auroc": auroc(te.y.values, s),
-                             "balanced_accuracy": bacc(te.y.values, p), **TRACE})
+        runs = [("always_guess", None, None)]
+        runs += [("history_only", ["h_is_jpeg", "h_quality", "h_w", "h_h"], tr.y)]
+        runs += [("shuffled_labels", PIXEL + FREQ, rng.permutation(tr.y.values))   # deviation 1: many shuffles,
+                 for _ in range(CFG["shuffle_rounds"])]                              # judged on the mean
+        runs += [("pre_receipt_history (exploratory)", ["o_is_jpeg", "o_w", "o_h"], tr.y)]
+        res = {}
+        for name, cols, ytr in runs:
+            if cols is None:
+                s, p = np.zeros(len(te)), np.zeros(len(te), int)
+            else:
+                sc, m, C, thr, _ = fit(tr, va, cols, ytr)
+                s = m.decision_function(sc.transform(te[cols]))
+                p = (s >= thr).astype(int)
+            res.setdefault(name, []).append((auroc(te.y.values, s), bacc(te.y.values, p)))
+        for name, r in res.items():
+            r = np.array(r)
+            controls.append({"exp": exp, "control": name, "auroc": r[:, 0].mean(), "auroc_sd": r[:, 0].std(),
+                             "balanced_accuracy": r[:, 1].mean(), "rounds": len(r), **TRACE})
     return pd.concat(preds, ignore_index=True), models, pd.DataFrame(controls)
 
 
 def gate(controls):
-    tol = 0.2 if PILOT else 0.1
+    tol = CFG["shuffle_mean_tolerance"]
     c = controls.set_index(["exp", "control"]).auroc
     for exp in controls.exp.unique():
-        check(abs(c[exp, "shuffled_labels"] - 0.5) < tol, f"{exp}: shuffled-label AUROC {c[exp, 'shuffled_labels']:.3f} ~ 0.5")
+        check(abs(c[exp, "shuffled_labels"] - 0.5) < tol,
+              f"{exp}: mean shuffled-label AUROC {c[exp, 'shuffled_labels']:.3f} within 0.5 +/- {tol}")
         if exp != "E2":   # E2 is the deliberate mismatch; the history classifier is meant to see it
             check(abs(c[exp, "history_only"] - 0.5) < 0.02, f"{exp}: history-only AUROC {c[exp, 'history_only']:.3f} ~ 0.5")
 
