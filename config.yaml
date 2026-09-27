@@ -1,0 +1,50 @@
+# Stage 0 — locked configuration (src/experimental-pipeline.md, Section 2).
+# Written 2026-09-27, before any image was downloaded. Never edited after results;
+# later changes go under `deviations:` with a date and reason.
+
+dataset: GenImage                          # [13]
+source: nebula/GenImage-arrow              # HF mirror of the official GenImage `val` (= test) folders
+fallback_step_used: b                      # (b) partial download / streaming; only sampled rows are stored
+source_split: test                         # GenImage `val` folder; 6000 real + 6000 fake per subset
+generators: [biggan, sd_v1_4, adm]
+mirror_dirs: {biggan: BigGAN, sd_v1_4: stable_diffusion_v_1_4, adm: ADM}
+quota_per_generator: 500                   # 500 fake + 500 real drawn from each subset -> 1500 / 1500
+stream_keep_rate: 0.12                     # keep row if sha1(image_path) < 0.12; content-blind, ~720 per class per subset
+pilot_per_class: 200
+
+image_size: 256                            # shorter side 256 (bicubic), center crop 256x256
+resize_kernel: bicubic
+decoder: Pillow                            # version recorded in every manifest
+luminance: "Y = (0.299 R + 0.587 G + 0.114 B) / 255, float32, [0, 1]"  # ITU-R BT.601
+standard_format: png
+
+jpeg_qualities: [90, 75, 50]
+jpeg_encoder: {library: Pillow, subsampling: "4:2:0", optimize: false}   # version pinned in manifest
+c2_mismatch: {real: jpeg_75, fake: png}    # control only: the two classes get different treatment
+
+phash: {kind: dct_64bit, max_hamming: 4}   # near-copy rule, same for both classes
+
+features:                                  # Section 5 + Stage 0 lock table
+  pixel: [1, 2, 3, 4, 5, 6, 7]
+  frequency: [8, 9, 10, 11, 12, 13, 14]
+  mean_removed_before_window: true
+  window: hann_2d
+  spectrum: power
+  bands: {low: [0, 0.05], mid: [0.05, 0.25], high: [0.25, 0.5], top: [0.375, 0.5]}   # (a, b] cycles/pixel, DC excluded
+  slope: "radially averaged power in 1/256-wide radius bins, log-log least squares over r in (0.05, 0.5]"
+  anisotropy: "coefficient of variation of mean power over 12 sectors of 30 deg, mid band"
+  peak: "largest non-DC 3x3 local maximum of power / total non-DC power (whole spectrum)"
+  laplacian: "4-neighbour [[0,1,0],[1,-4,1],[0,1,0]]"
+  highpass: "I - binomial3x3(I), kernel [1,2,1]x[1,2,1]/16"
+  border: reflect
+
+classifier: {model: logistic_l2, C_grid: [0.01, 0.1, 1, 10], class_weight: balanced, max_iter: 5000}
+model_selection: "C by validation AUROC; threshold by validation balanced accuracy"
+metrics: [auroc, balanced_accuracy]
+
+split: {fractions: {train: 0.6, val: 0.2, test: 0.2}, stratify: [label, source_subset]}
+unseen_generator: sd_v1_4                  # E4/E5: its fakes are removed from train and val
+seeds: {split: 2026, bootstrap: 20260914}
+bootstrap_rounds: 1000
+
+deviations: []
