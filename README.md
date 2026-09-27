@@ -78,6 +78,9 @@ python report.py                 # Stage 10: figures/ from results/
 
 Every script stops on a failed check. Result tables carry the config hash, code version, and seeds.
 
+**Rerun check (2026-09-27):** Stages 2-9 rerun from the stored raw sample reproduced every `data/` table
+byte-for-byte and every `results/*.csv` table exactly (only the `code_version` column differs).
+
 ## What the study does in one line
 
 Compare three simple feature sets (pixel-pattern, frequency, and both combined)
