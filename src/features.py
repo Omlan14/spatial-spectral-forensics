@@ -129,7 +129,7 @@ def run():
         f"# Extraction report\n\nconfig `{CONFIG_HASH}`; {len(paths)} unique files, {len(table)} variant rows; "
         f"{secs:.0f} s.\n\nChecks passed: synthetic hand calculations, no NaN/Inf, rename invariance, repeat identity.\n\n"
         f"Spectral slope fit R^2: median {F.slope_r2.median():.3f}, min {F.slope_r2.min():.3f}.\n\n"
-        + table.groupby(["condition", "quality"]).size().rename("rows").to_frame().to_markdown() + "\n")
+        + "```\n" + table.groupby(["condition", "quality"]).size().to_string() + "\n```\n")
     print(f"  features.parquet: {len(table)} rows, {secs:.0f} s")
 
 
