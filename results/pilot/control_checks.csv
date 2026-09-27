@@ -1,0 +1,9 @@
+exp,control,auroc,balanced_accuracy,config_hash,code_version,seed_split,seed_bootstrap
+E1,always_guess,0.5,0.5,0cbe77dcdb19,878ded7,2026,20260914
+E1,history_only,0.5,0.5,0cbe77dcdb19,878ded7,2026,20260914
+E1,shuffled_labels,0.6189458689458689,0.5758547008547008,0cbe77dcdb19,878ded7,2026,20260914
+E1,pre_receipt_history (exploratory),1.0,1.0,0cbe77dcdb19,878ded7,2026,20260914
+E3_q75,always_guess,0.5,0.5,0cbe77dcdb19,878ded7,2026,20260914
+E3_q75,history_only,0.5,0.5,0cbe77dcdb19,878ded7,2026,20260914
+E3_q75,shuffled_labels,0.551994301994302,0.607905982905983,0cbe77dcdb19,878ded7,2026,20260914
+E3_q75,pre_receipt_history (exploratory),1.0,1.0,0cbe77dcdb19,878ded7,2026,20260914
