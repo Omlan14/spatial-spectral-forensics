@@ -1,0 +1,434 @@
+% =====================================================================
+% Project reference set — 20 cited entries + 17 archived entries.
+% All details checked on 2026-09-14 against primary sources: arXiv
+% pages, CVF Open Access, publisher DOI pages (SciTePress, IEEE),
+% the OpenReview API, and the OpenAlex index.
+%
+% This pass fixed EIGHT wrong author lists from the previous draft
+% (wang2020cnn, frank2020leveraging, guillaro2025bfree,
+% corvi2023detection, tan2024npr, wang2023dire, yan2025sanity,
+% zhu2023genimage), completed three incomplete lists (sato2026radial,
+% pellegrini2025aigenbench, chu2025fire), and fixed two venues
+% (corvi2023detection = ICASSP 2023; durall2020watch = CVPR Workshops
+% 2020). Only the ACTIVE section is cited; the ARCHIVED section is
+% kept for future work and is not cited by anything.
+%
+% Rule: nothing is cited until its details are checked against a
+% primary source.
+% =====================================================================
+
+% ---------------------------------------------------------------------
+% ACTIVE — the 20-paper reference set (cited in literature-review.md
+% and experimental-pipeline.md)
+% ---------------------------------------------------------------------
+
+% --- Group A: evaluation bias and controls ---
+
+@inproceedings{grommelt2024fake,
+  author    = {Grommelt, Patrick and Weiss, Louis and Pfreundt, Franz-Josef and Keuper, Janis},
+  title     = {Fake or {JPEG}? {R}evealing Common Biases in Generated Image Detection Datasets},
+  booktitle = {Computer Vision -- ECCV 2024 Workshops, Lecture Notes in Computer Science},
+  year      = {2024},
+  note      = {Proceedings published 2025},
+  doi       = {10.1007/978-3-031-92089-9_6},
+  eprint    = {2403.17608},
+  archivePrefix = {arXiv},
+  url       = {https://arxiv.org/abs/2403.17608}
+}
+
+@inproceedings{guillaro2025bfree,
+  author    = {Guillaro, Fabrizio and Zingarini, Giada and Usman, Ben and Sud, Avneesh and Cozzolino, Davide and Verdoliva, Luisa},
+  title     = {A Bias-Free Training Paradigm for More General {AI}-generated Image Detection},
+  booktitle = {Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR)},
+  year      = {2025},
+  note      = {Method: B-Free; author list corrected against arXiv:2412.17671 and the CVPR 2025 Open Access page (a previous draft contained a non-existent co-author and missed two)},
+  eprint    = {2412.17671},
+  archivePrefix = {arXiv},
+  url       = {https://openaccess.thecvf.com/content/CVPR2025/html/Guillaro_A_Bias-Free_Training_Paradigm_for_More_General_AI-generated_Image_Detection_CVPR_2025_paper.html}
+}
+
+@inproceedings{gye2025sfld,
+  author    = {Gye, Seoyeon and Ko, Junwon and Shon, Hyounguk and Kwon, Minchan and Kim, Junmo},
+  title     = {{SFLD}: Reducing the Content Bias for {AI}-Generated Image Detection},
+  booktitle = {IEEE/CVF Winter Conference on Applications of Computer Vision (WACV)},
+  year      = {2025},
+  note      = {Oral},
+  eprint    = {2502.17105},
+  archivePrefix = {arXiv},
+  url       = {https://arxiv.org/abs/2502.17105}
+}
+
+@inproceedings{yan2025sanity,
+  author    = {Yan, Shilin and Li, Ouxiang and Cai, Jiayin and Hao, Yanbin and Jiang, Xiaolong and Hu, Yao and Xie, Weidi},
+  title     = {A Sanity Check for {AI}-generated Image Detection},
+  booktitle = {International Conference on Learning Representations (ICLR)},
+  year      = {2025},
+  note      = {Introduces the Chameleon dataset and AIDE; venue confirmed via OpenReview (ICLR 2025 Poster); author list corrected against arXiv:2406.19435 (a previous draft listed different names)},
+  eprint    = {2406.19435},
+  archivePrefix = {arXiv},
+  url       = {https://arxiv.org/abs/2406.19435}
+}
+
+% --- Group B: frequency-domain evidence and its limits ---
+
+@inproceedings{frank2020leveraging,
+  author    = {Frank, Joel and Eisenhofer, Thorsten and Sch{\"o}nherr, Lea and Fischer, Asja and Kolossa, Dorothea and Holz, Thorsten},
+  title     = {Leveraging Frequency Analysis for Deep Fake Image Recognition},
+  booktitle = {Proceedings of the 37th International Conference on Machine Learning (ICML)},
+  year      = {2020},
+  note      = {Last author verified as Thorsten Holz (a previous draft listed an incorrect name)},
+  eprint    = {2003.08685},
+  archivePrefix = {arXiv},
+  url       = {https://proceedings.mlr.press/v119/frank20a.html}
+}
+
+@inproceedings{dzanic2020fourier,
+  author    = {Dzanic, Tarik and Shah, Karan and Witherden, Freddie},
+  title     = {Fourier Spectrum Discrepancies in Deep Network Generated Images},
+  booktitle = {Advances in Neural Information Processing Systems 33 (NeurIPS)},
+  year      = {2020},
+  pages     = {3022--3032},
+  eprint    = {1911.06465},
+  archivePrefix = {arXiv},
+  url       = {https://arxiv.org/abs/1911.06465}
+}
+
+@inproceedings{durall2020watch,
+  author    = {Durall, Ricard and Keuper, Margret and Keuper, Janis},
+  title     = {Watch your Up-Convolution: {CNN} Based Generative Deep Neural Networks are Failing to Reproduce Spectral Distributions},
+  booktitle = {Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition Workshops (CVPRW)},
+  year      = {2020},
+  note      = {Year corrected to 2020 (CVF Open Access records the paper under CVPR 2020 workshops)},
+  eprint    = {2003.01826},
+  archivePrefix = {arXiv},
+  url       = {https://openaccess.thecvf.com/content_CVPR_2020/html/Durall_Watch_Your_Up-Convolution_CNN_Based_Generative_Deep_Neural_Networks_Are_CVPR_2020_paper.html}
+}
+
+@inproceedings{zhang2019artifacts,
+  author    = {Zhang, Xu and Karaman, Svebor and Chang, Shih-Fu},
+  title     = {Detecting and Simulating Artifacts in {GAN} Fake Images},
+  booktitle = {IEEE International Workshop on Information Forensics and Security (WIFS)},
+  year      = {2019},
+  note      = {arXiv:1907.06515 is the extended AutoGAN version},
+  doi       = {10.1109/WIFS47025.2019.9035107},
+  eprint    = {1907.06515},
+  archivePrefix = {arXiv},
+  url       = {https://arxiv.org/abs/1907.06515}
+}
+
+@inproceedings{dong2022think,
+  author    = {Dong, Chengdong and Kumar, Ajay and Liu, Eryun},
+  title     = {Think Twice Before Detecting {GAN}-Generated Fake Images From Their Spectral Domain Imprints},
+  booktitle = {Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR)},
+  year      = {2022},
+  pages     = {7865--7874},
+  url       = {https://openaccess.thecvf.com/content/CVPR2022/html/Dong_Think_Twice_Before_Detecting_GAN-Generated_Fake_Images_From_Their_Spectral_CVPR_2022_paper.html}
+}
+
+@inproceedings{sato2026radial,
+  author    = {Sato, Yuta and Yamashita, Takayoshi and Fujiyoshi, Hironobu and Hirakawa, Tsubasa},
+  title     = {Frequency-Domain Detection of {AI}-Generated Images via Radial Spectrum Templates},
+  booktitle = {International Conference on Computer Vision Theory and Applications (VISAPP)},
+  year      = {2026},
+  note      = {Author list completed from the publisher record (SciTePress)},
+  doi       = {10.5220/0014250800004084},
+  url       = {https://doi.org/10.5220/0014250800004084}
+}
+
+% --- Group C: generator dependence and data at scale ---
+
+@inproceedings{wang2020cnn,
+  author    = {Wang, Sheng-Yu and Wang, Oliver and Zhang, Richard and Owens, Andrew and Efros, Alexei A.},
+  title     = {{CNN}-Generated Images are Surprisingly Easy to Spot... for Now},
+  booktitle = {Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR)},
+  year      = {2020},
+  note      = {Author list verified against arXiv:1912.11035 (a previous draft listed a non-author)},
+  eprint    = {1912.11035},
+  archivePrefix = {arXiv},
+  url       = {https://arxiv.org/abs/1912.11035}
+}
+
+@inproceedings{corvi2023detection,
+  author    = {Corvi, Riccardo and Cozzolino, Davide and Zingarini, Giada and Poggi, Giovanni and Nagano, Koki and Verdoliva, Luisa},
+  title     = {On the Detection of Synthetic Images Generated by Diffusion Models},
+  booktitle = {IEEE International Conference on Acoustics, Speech and Signal Processing (ICASSP)},
+  year      = {2023},
+  note      = {Venue corrected from a commonly seen "AVSS 2023" attribution (Crossref DOI 10.1109/ICASSP49357.2023.10095167); author list corrected against arXiv:2211.00680 (a previous draft listed F. Marra in place of K. Nagano)},
+  doi       = {10.1109/ICASSP49357.2023.10095167},
+  eprint    = {2211.00680},
+  archivePrefix = {arXiv},
+  url       = {https://arxiv.org/abs/2211.00680}
+}
+
+@inproceedings{zhu2023genimage,
+  author    = {Zhu, Mingjian and Chen, Hanting and Yan, Qiangyu and Huang, Xudong and Lin, Guanyu and Li, Wei and Tu, Zhijun and Hu, Hailin and Hu, Jie and Wang, Yunhe},
+  title     = {GenImage: A Million-Scale Benchmark for Detecting {AI}-Generated Image},
+  booktitle = {Advances in Neural Information Processing Systems 36 (NeurIPS) Datasets and Benchmarks Track},
+  year      = {2023},
+  note      = {Author list verified against arXiv:2306.08571 and OpenAlex (a previous draft listed incorrect names)},
+  eprint    = {2306.08571},
+  archivePrefix = {arXiv},
+  url       = {https://arxiv.org/abs/2306.08571}
+}
+
+@inproceedings{pellegrini2025aigenbench,
+  author    = {Pellegrini, Lorenzo and Cozzolino, Davide and Pandolfini, Serafino and Maltoni, Davide and Ferrara, Matteo and Verdoliva, Luisa and Prati, Marco and Ramilli, Marco},
+  title     = {{AI}-GenBench: A New Ongoing Benchmark for {AI}-Generated Image Detection},
+  booktitle = {International Joint Conference on Neural Networks (IJCNN), Verimedia Workshop},
+  year      = {2025},
+  note      = {Author list completed from arXiv:2504.20865},
+  doi       = {10.1109/IJCNN64981.2025.11228377},
+  eprint    = {2504.20865},
+  archivePrefix = {arXiv},
+  url       = {https://arxiv.org/abs/2504.20865}
+}
+
+% --- Group D: pixel-pattern statistics and classifier design ---
+
+@article{nataraj2019cooccurrence,
+  author  = {Nataraj, Lakshmanan and Mohammed, Tajuddin Manhar and Chandrasekaran, Shivkumar and Flenner, Arjuna and Bappy, Jawadul H. and Roy-Chowdhury, Amit K. and Manjunath, B. S.},
+  title   = {Detecting {GAN} Generated Fake Images using Co-occurrence Matrices},
+  journal = {Electronic Imaging, Media Watermarking, Security, and Forensics},
+  year    = {2019},
+  note    = {Author order verified against arXiv:1903.06836},
+  eprint  = {1903.06836},
+  archivePrefix = {arXiv},
+  url     = {https://arxiv.org/abs/1903.06836}
+}
+
+@inproceedings{tan2024npr,
+  author    = {Tan, Chuangchuang and Liu, Huan and Zhao, Yao and Wei, Shikui and Gu, Guanghua and Liu, Ping and Wei, Yunchao},
+  title     = {Rethinking the Up-Sampling Operations in {CNN}-Based Generative Network for Generalizable Deepfake Detection},
+  booktitle = {Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR)},
+  year      = {2024},
+  note      = {NPR = Neighboring Pixel Relationships; author list verified against arXiv:2312.10461 and OpenAlex (a co-author was missing from a previous draft)},
+  eprint    = {2312.10461},
+  archivePrefix = {arXiv},
+  url       = {https://arxiv.org/abs/2312.10461}
+}
+
+@inproceedings{ojha2023universal,
+  author    = {Ojha, Utkarsh and Li, Yuheng and Lee, Yong Jae},
+  title     = {Towards Universal Fake Image Detectors that Generalize Across Generative Models},
+  booktitle = {Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR)},
+  year      = {2023},
+  note      = {A.k.a. UniversalFakeDetect; venue confirmed via OpenAlex},
+  eprint    = {2302.10174},
+  archivePrefix = {arXiv},
+  url       = {https://arxiv.org/abs/2302.10174}
+}
+
+% --- Group E: reconstruction-based context (cited, not implemented) ---
+
+@inproceedings{ricker2024aeroblade,
+  author    = {Ricker, Jonas and Lukovnikov, Denis and Fischer, Asja},
+  title     = {{AEROBLADE}: Training-Free Detection of Latent Diffusion Images Using Autoencoder Reconstruction Error},
+  booktitle = {Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR)},
+  year      = {2024},
+  eprint    = {2401.17879},
+  archivePrefix = {arXiv},
+  url       = {https://arxiv.org/abs/2401.17879}
+}
+
+@inproceedings{wang2023dire,
+  author    = {Wang, Zhendong and Bao, Jianmin and Zhou, Wengang and Wang, Weilun and Hu, Hezhen and Chen, Hong and Li, Houqiang},
+  title     = {{DIRE} for Diffusion-Generated Image Detection},
+  booktitle = {Proceedings of the IEEE/CVF International Conference on Computer Vision (ICCV)},
+  year      = {2023},
+  note      = {Author list verified against arXiv:2303.09295 and OpenAlex (two co-authors were missing from a previous draft)},
+  eprint    = {2303.09295},
+  archivePrefix = {arXiv},
+  url       = {https://arxiv.org/abs/2303.09295}
+}
+
+@inproceedings{chu2025fire,
+  author    = {Chu, Beilin and Xu, Xuan and Wang, Xin and Zhang, Yufei and You, Weike and Zhou, Linna},
+  title     = {{FIRE}: Robust Detection of Diffusion-Generated Images via Frequency-Guided Reconstruction Error},
+  booktitle = {Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR)},
+  year      = {2025},
+  note      = {Author list completed from arXiv:2412.07140},
+  doi       = {10.1109/CVPR52734.2025.01197},
+  eprint    = {2412.07140},
+  archivePrefix = {arXiv},
+  url       = {https://arxiv.org/abs/2412.07140}
+}
+
+% ---------------------------------------------------------------------
+% ARCHIVED — retained from the earlier merged corpus, NOT cited by the
+% current 20-paper set. Kept so future scope expansions can start from
+% them. Before citing ANY entry below: re-verify title, authors, and
+% venue against a primary source (some entries carry incomplete author
+% lists or unverified venues).
+% ---------------------------------------------------------------------
+
+@inproceedings{yu2019fingerprints,
+  author    = {Yu, Ning and Davis, Larry and Fritz, Mario},
+  title     = {Do {GAN}s Leave Artificial Fingerprints?},
+  booktitle = {IEEE Conference on Multimedia Information Processing and Retrieval (MIPR)},
+  year      = {2019},
+  eprint    = {1812.11842},
+  archivePrefix = {arXiv},
+  url       = {https://arxiv.org/abs/1812.11842}
+}
+
+@inproceedings{ricker2024diffusion,
+  author    = {Ricker, Jonas and Lukovnikov, Denis and Fischer, Asja},
+  title     = {Towards the Detection of Diffusion Model Deepfakes},
+  booktitle = {International Conference on Computer Vision Theory and Applications (VISAPP)},
+  year      = {2024},
+  note      = {Extended arXiv version 2210.14571},
+  eprint    = {2210.14571},
+  archivePrefix = {arXiv},
+  url       = {https://arxiv.org/abs/2210.14571}
+}
+
+@inproceedings{corvi2023intriguing,
+  author    = {Corvi, Riccardo and Cozzolino, Davide and Poggi, Giovanni and Marra, Francesco and Verdoliva, Luisa},
+  title     = {Intriguing Properties of Synthetic Images: From Generative Adversarial Networks to Diffusion Models},
+  booktitle = {Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition Workshops (CVPRW, WMF)},
+  year      = {2023},
+  url       = {https://openaccess.thecvf.com/content/CVPR2023W/WMF/html/Corvi_Intriguing_Properties_of_Synthetic_Images_From_Generative_Adversarial_Networks_to_CVPRW_2023_paper.html}
+}
+
+@article{mccloskey2018color,
+  author  = {McCloskey, Scott and Albright, Michael},
+  title   = {Detecting {GAN}-generated Imagery using Color Cues},
+  journal = {arXiv preprint arXiv:1812.08247},
+  year    = {2018},
+  eprint  = {1812.08247},
+  archivePrefix = {arXiv},
+  url     = {https://arxiv.org/abs/1812.08247}
+}
+
+@article{barni2020crossband,
+  author  = {Barni, Mauro and Kallas, Kassem and Nowroozi, Ehsan and Tondi, Benedetta},
+  title   = {{CNN} Detection of {GAN}-Generated Face Images based on Cross-Band Co-occurrences Analysis},
+  journal = {arXiv preprint arXiv:2007.12909},
+  year    = {2020},
+  eprint  = {2007.12909},
+  archivePrefix = {arXiv},
+  url     = {https://arxiv.org/abs/2007.12909}
+}
+
+@article{pontorno2024deepfeaturex,
+  author  = {Pontorno, Orazio and Guarnera, Luca and Battiato, Sebastiano},
+  title   = {DeepFeatureX Net: Deep Features eXtractors based Network for discriminating synthetic from real images},
+  journal = {arXiv preprint arXiv:2404.15697},
+  year    = {2024},
+  eprint  = {2404.15697},
+  archivePrefix = {arXiv},
+  url     = {https://arxiv.org/abs/2404.15697}
+}
+
+@article{gragnaniello2021critical,
+  author  = {Gragnaniello, Diego and Cozzolino, Davide and Marra, Francesco and Poggi, Giovanni and Verdoliva, Luisa},
+  title   = {Are {GAN} generated images easy to detect? {A} critical analysis of the state-of-the-art},
+  journal = {arXiv preprint arXiv:2104.02617},
+  year    = {2021},
+  eprint  = {2104.02617},
+  archivePrefix = {arXiv},
+  url     = {https://arxiv.org/abs/2104.02617}
+}
+
+@inproceedings{tan2024frequency,
+  author    = {Tan, Chuangchuang and Zhao, Yao and Wei, Shikui and Gu, Guanghua and Liu, Ping and Wei, Yunchao},
+  title     = {Frequency-Aware Deepfake Detection: Improving Generalizability through Frequency Space Learning},
+  booktitle = {Proceedings of the AAAI Conference on Artificial Intelligence},
+  year      = {2024},
+  eprint    = {2403.07240},
+  archivePrefix = {arXiv},
+  url       = {https://arxiv.org/abs/2403.07240}
+}
+
+@inproceedings{liu2024fatformer,
+  author    = {Liu, Huan and Tan, Zichang and Tan, Chuangchuang and Wei, Yunchao and Zhao, Yao and Wang, Jingdong},
+  title     = {Forgery-aware Adaptive Transformer for Generalizable Synthetic Image Detection},
+  booktitle = {Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR)},
+  year      = {2024},
+  note      = {A.k.a. FatFormer; author list NOT re-verified in the 2026-09-14 pass},
+  eprint    = {2312.16649},
+  archivePrefix = {arXiv},
+  url       = {https://arxiv.org/abs/2312.16649}
+}
+
+@inproceedings{freqdebias2025,
+  author    = {{Author list incomplete -- re-verify before citing}},
+  title     = {FreqDebias: Towards Generalizable Deepfake Detection via Consistency-Driven Frequency Debiasing},
+  booktitle = {Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR)},
+  year      = {2025},
+  note      = {arXiv:2509.22412; author list was never completed},
+  eprint    = {2509.22412},
+  archivePrefix = {arXiv},
+  url       = {https://arxiv.org/abs/2509.22412}
+}
+
+@article{yermakov2026alphablending,
+  author  = {Yermakov, Andrii and Cech, Jan and Fritz, Mario and Matas, Jiri},
+  title   = {The Alpha Blending Hypothesis: Compositing Shortcut in Deepfake Detection},
+  journal = {arXiv preprint arXiv:2605.10334},
+  year    = {2026},
+  eprint  = {2605.10334},
+  archivePrefix = {arXiv},
+  url     = {https://arxiv.org/abs/2605.10334}
+}
+
+@inproceedings{chen2024drct,
+  author    = {Chen, Baoying and Zeng, Jishen and Yang, Jianquan and Lu, Ruiying and others},
+  title     = {{DRCT}: Diffusion Reconstruction Contrastive Training towards Universal Detection of Diffusion Generated Images},
+  booktitle = {Proceedings of the 41st International Conference on Machine Learning (ICML, PMLR v235)},
+  year      = {2024},
+  note      = {Author list incomplete; re-verify before citing},
+  url       = {https://proceedings.mlr.press/v235/chen24ay.html}
+}
+
+@article{xu2025survey,
+  author  = {Xu, Qijie and Wang, Can and Chen, Jiawei and Lyu, Siwei and Chen, Defang},
+  title   = {Fully {AI}-Generated Image Detection: Definition, Recent Advances and Challenges},
+  journal = {arXiv preprint arXiv:2502.19716},
+  year    = {2025},
+  eprint  = {2502.19716},
+  archivePrefix = {arXiv},
+  url     = {https://arxiv.org/abs/2502.19716}
+}
+
+@article{verdoliva2020overview,
+  author  = {Verdoliva, Luisa},
+  title   = {Media Forensics and {DeepFakes}: An Overview},
+  journal = {IEEE Journal of Selected Topics in Signal Processing},
+  year    = {2020},
+  eprint  = {2001.06564},
+  archivePrefix = {arXiv},
+  url     = {https://arxiv.org/abs/2001.06564}
+}
+
+@inproceedings{liu2021spsl,
+  author    = {Liu, Honggu and Li, Xiaodong and Zhou, Wenbo and Chen, Yang and He, Yuan and Xue, Hui and Zhang, Weiming and Yu, Nenghai},
+  title     = {Spatial-Phase Shallow Learning: Rethinking Face Forgery Detection in Frequency Domain},
+  booktitle = {Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR)},
+  year      = {2021},
+  note      = {Face-forgery scope; author list NOT re-verified in the 2026-09-14 pass},
+  eprint    = {2103.01856},
+  archivePrefix = {arXiv},
+  url       = {https://arxiv.org/abs/2103.01856}
+}
+
+@article{yang2025freqcross,
+  author  = {Yang, Guang},
+  title   = {{FreqCross}: A Multi-Modal Frequency-Spatial Fusion Network for Robust Detection of Stable Diffusion 3.5 Generated Images},
+  journal = {arXiv preprint arXiv:2507.02995},
+  year    = {2025},
+  eprint  = {2507.02995},
+  archivePrefix = {arXiv},
+  url     = {https://arxiv.org/abs/2507.02995}
+}
+
+@article{li2026spectraltail,
+  author  = {Li, Xingyi and others},
+  title   = {Spectral Tail Auxiliary Learning for {AI}-Generated Image Detection},
+  journal = {arXiv preprint arXiv:2605.22751},
+  year    = {2026},
+  note      = {Author list incomplete; no peer-reviewed venue established at verification time},
+  eprint    = {2605.22751},
+  archivePrefix = {arXiv},
+  url       = {https://arxiv.org/abs/2605.22751}
+}

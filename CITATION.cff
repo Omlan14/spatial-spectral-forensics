@@ -1,0 +1,16 @@
+cff-version: 1.2.0
+message: "If you reference this project or its pipeline, please cite it as below."
+title: "Interpreting Spatial-Frequency Features for AI-Generated Image Detection Under Generator Shift and JPEG Compression"
+type: software
+authors:
+  - name: "The DIP Project Authors"
+version: 1.0.0
+date-released: "2026-09-14"
+license: MIT
+keywords:
+  - ai-generated-image-detection
+  - digital-image-processing
+  - frequency-domain-analysis
+  - jpeg-compression
+  - generator-shift
+  - reproducible-research

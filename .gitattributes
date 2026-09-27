@@ -1,0 +1,9 @@
+# Normalise line endings across platforms; keep binaries untouched.
+* text=auto eol=lf
+
+*.png binary
+*.pdf binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
