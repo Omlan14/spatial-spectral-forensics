@@ -1,0 +1,15 @@
+feature,arm,definition
+f01_var,pixel,variance of I
+f02_skew,pixel,skewness of I
+f03_exkurt,pixel,excess kurtosis of I
+f04_grad_mean,pixel,mean Sobel |grad|
+f05_grad_std,pixel,std Sobel |grad|
+f06_lap_var,pixel,variance of 4-neighbour Laplacian
+f07_hp_var,pixel,variance of I - binomial3x3(I)
+f08_low,frequency,"low-band power fraction (0,0.05]"
+f09_mid,frequency,"mid-band power fraction (0.05,0.25]"
+f10_high,frequency,"high-band power fraction (0.25,0.5]"
+f11_nyq_ratio,frequency,"power (0.375,0.5] / power (0.25,0.5]"
+f12_slope,frequency,"log-log radial power slope over (0.05,0.5]"
+f13_aniso,frequency,CV of mid-band power over 12 x 30deg sectors
+f14_peak,frequency,largest non-DC local max / non-DC power
