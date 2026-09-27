@@ -11,7 +11,7 @@ project:
     combined? And how much does the answer change when (a) both classes are
     JPEG-compressed, and (b) the test set uses an image generator the study never
     trained on?
-  status: active                  # active | paused | concluded
+  status: concluded               # active | paused | concluded
   started: "2026-09-14"           # pipeline locked
   domain: "digital image processing / image forensics / frequency-domain analysis"
 
@@ -151,28 +151,28 @@ hypotheses:
   # Fresh hypotheses (locked 2026-09-14 in src/experimental-pipeline.md Section 7).
   - id: H1
     statement: "At least one feature arm (pixel-pattern, frequency, combined) separates real from AI-generated images on the clean condition (E1, C0)."
-    status: pending                # pending | active | supported | refuted | inconclusive
+    status: supported                # pending | active | supported | refuted | inconclusive
     motivation: "First check: does any signal exist before interpreting anything else."
     parent: null
     priority: high
     decision_rule: "Supported if at least one arm shows a confidence interval excluding chance."
   - id: H2
     statement: "A deliberate mismatch (C2) changes separation relative to matched conditions (E1/E3)."
-    status: pending
+    status: partly-supported
     motivation: "Control: shows a careless pipeline can 'detect' processing instead of content."
     parent: null
     priority: high
     decision_rule: "Supported only if separation changes in the predicted direction with a group-based CI. Wording: 'the separation changed after the controlled change'."
   - id: H3
     statement: "Broad-spectrum frequency features (8-11, 13) behave differently from a narrow peak feature (14), judged on stability and on separation separately."
-    status: pending
+    status: supported
     motivation: "Splits the verdict in two; never merges 'values changed' with 'classification got worse'."
     parent: null
     priority: medium
     decision_rule: "Two separate verdicts: (a) feature-value stability, (b) classification separation."
   - id: H4
     statement: "Detection degrades on a generator family never seen in training (E4/E5)."
-    status: pending
+    status: supported
     motivation: "Generator shift is a published, measured phenomenon."
     parent: null
     priority: high
@@ -194,23 +194,22 @@ experiments:
     H4: [E4, E5]
     H5: []                       # not tested
   proxy_metric: "AUROC (primary); balanced accuracy at the validation-selected threshold (secondary)"
-  baseline_value: null           # control check 1 (always-guess baseline) to be filled after E1
-  best_value: null
-  total_runs: 0
-  trajectory: []
-  # - run_id: "run_001"
-  #   hypothesis: "H1"
-  #   experiment: "E1"
-  #   metric_value: null
-  #   delta: null
-  #   wall_time_min: null
-  #   change_summary: ""
-  #   timestamp: ""
+  baseline_value: 0.5            # control check 1 (always-guess), all experiments
+  best_value: 0.629              # E5 headline, combined arm, unseen SD v1.4 (all-generator 0.786)
+  total_runs: 21                 # E1, E2, E3 x3, E4, E5 x 3 arms
+  trajectory:
+    - {run_id: E1, hypothesis: H1, metric: "AUROC combined", metric_value: 0.793, baseline: 0.5, change_summary: "C0, group split; freq 0.752, pixel 0.666"}
+    - {run_id: E2, hypothesis: H2, metric: "AUROC combined", metric_value: 0.806, baseline: 0.793, change_summary: "C2 mismatch control; +0.012 [0.007, 0.017] vs E1"}
+    - {run_id: E3_q90, hypothesis: H3, metric: "AUROC combined", metric_value: 0.786, baseline: 0.793, change_summary: "matched JPEG q90"}
+    - {run_id: E3_q75, hypothesis: H3, metric: "AUROC combined", metric_value: 0.791, baseline: 0.793, change_summary: "matched JPEG q75"}
+    - {run_id: E3_q50, hypothesis: H3, metric: "AUROC combined", metric_value: 0.794, baseline: 0.793, change_summary: "matched JPEG q50"}
+    - {run_id: E4, hypothesis: H4, metric: "AUROC combined, SD v1.4", metric_value: 0.634, baseline: 0.712, change_summary: "SD v1.4 held out, C0; -0.078 [-0.124, -0.034]"}
+    - {run_id: E5, hypothesis: H4, metric: "AUROC combined, SD v1.4", metric_value: 0.629, baseline: 0.704, change_summary: "headline: SD v1.4 held out, q75"}
 
 outer_loop:
-  cycle: 0
-  last_direction: null            # deepen | broaden | pivot | conclude
-  last_reflection: "Workspace initialized from the accepted proposal and locked pipeline."
+  cycle: 1
+  last_direction: conclude        # deepen | broaden | pivot | conclude
+  last_reflection: "All pre-registered experiments done; controls pass. Pooled separation is dominated by the BigGAN 2x-upsampling shortcut; diffusion families reach 0.63-0.76. Further work would change locked values, so the study concludes with limitations."
 
 workspace:
   findings: "findings.md"
