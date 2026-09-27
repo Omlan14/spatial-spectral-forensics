@@ -91,5 +91,48 @@ def _selfcheck():
     print("features self-check: all hand calculations match")
 
 
+def run():
+    """Extract features for every variant in data/variant_manifest.csv (C2 rows reuse C0/C1 files)."""
+    import shutil
+    import time
+
+    import pandas as pd
+    from common import CONFIG_HASH, DATA, ROOT, check
+
+    out = ROOT / "features"
+    out.mkdir(exist_ok=True)
+    vm = pd.read_csv(DATA / "variant_manifest.csv")
+    paths = vm.path.unique()
+    t = time.time()
+    res = {p: extract(luminance(ROOT / p)) for p in paths}
+    secs = time.time() - t
+    F = pd.DataFrame([np.r_[res[p][0], res[p][1]] for p in vm.path], columns=NAMES + ["slope_r2"])
+    table = pd.concat([vm[["image_id", "condition", "quality", "path", "sha256"]].reset_index(drop=True), F], axis=1)
+
+    check(np.isfinite(F.values).all(), "no NaN or Inf anywhere in the table")
+    tmp = out / "_renamed_copy.png"
+    shutil.copy(ROOT / paths[0], tmp)
+    check(np.array_equal(extract(luminance(tmp))[0], res[paths[0]][0]), "renaming a file does not change its features")
+    tmp.unlink()
+    check(all(np.array_equal(extract(luminance(ROOT / p))[0], res[p][0]) for p in paths[:20]),
+          "repeating a run produces identical values")
+
+    table.to_parquet(out / "features.parquet", index=False)
+    pd.DataFrame({"feature": NAMES, "arm": ["pixel"] * 7 + ["frequency"] * 7,
+                  "definition": ["variance of I", "skewness of I", "excess kurtosis of I", "mean Sobel |grad|",
+                                 "std Sobel |grad|", "variance of 4-neighbour Laplacian", "variance of I - binomial3x3(I)",
+                                 "low-band power fraction (0,0.05]", "mid-band power fraction (0.05,0.25]",
+                                 "high-band power fraction (0.25,0.5]", "power (0.375,0.5] / power (0.25,0.5]",
+                                 "log-log radial power slope over (0.05,0.5]", "CV of mid-band power over 12 x 30deg sectors",
+                                 "largest non-DC local max / non-DC power"]}).to_csv(out / "feature_dictionary.csv", index=False)
+    (out / "extraction_report.md").write_text(
+        f"# Extraction report\n\nconfig `{CONFIG_HASH}`; {len(paths)} unique files, {len(table)} variant rows; "
+        f"{secs:.0f} s.\n\nChecks passed: synthetic hand calculations, no NaN/Inf, rename invariance, repeat identity.\n\n"
+        f"Spectral slope fit R^2: median {F.slope_r2.median():.3f}, min {F.slope_r2.min():.3f}.\n\n"
+        + table.groupby(["condition", "quality"]).size().rename("rows").to_frame().to_markdown() + "\n")
+    print(f"  features.parquet: {len(table)} rows, {secs:.0f} s")
+
+
 if __name__ == "__main__":
     _selfcheck()
+    run()
