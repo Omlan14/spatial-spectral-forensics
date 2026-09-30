@@ -57,6 +57,8 @@ running), `code/`, `results/`, and `analysis.md`.
 | The decision timeline | [`research-log.md`](research-log.md) |
 | How experiments map to hypotheses | [`experiments/README.md`](experiments/README.md) |
 | **Results and conclusion** | [`reports/final_results.md`](reports/final_results.md) (read [`reports/limitations.md`](reports/limitations.md) first) |
+| **Final report (6-page IEEE)** | [`paper/final/main.pdf`](paper/final/main.pdf) - claim-to-evidence map in [`paper/final/README.md`](paper/final/README.md) |
+| **Final presentation** | [`presentation/final_presentation.pptx`](presentation/final_presentation.pptx) (13 slides, 3 presenters x 2 min) |
 
 ## Reproduce (Stage 10)
 

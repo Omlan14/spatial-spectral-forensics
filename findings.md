@@ -69,6 +69,17 @@ Learned during execution:
   GenImage study must report per-generator rows and pre-receipt history.
 - On Windows, always pass encoding="utf-8" when scripts write text files.
 
+## Exploratory post-hoc diagnostic (2026-09-30) — the final framing
+
+Giving every image the same resampling history (native 128 crop + one shared 2x bicubic; BigGAN
+pixels identical to C0) leaves pooled combined AUROC unchanged (0.796 -> 0.802, delta +0.006
+[-0.036, 0.045]) but moves per-generator AUROC from -0.17 (BigGAN, frequency) to +0.30 (unseen SD,
+pixel: 0.477 -> 0.771) and removes the frequency arm's advantage (pixel - frequency -0.088 -> +0.022).
+Fixed C0 models on JPEG test images: pooled AUROC change <= 0.027, but the pixel model's false
+positives on reals go 98 -> 157 of 300 at q50. Framing: *same score, different story* — resampling
+history is part of the result. Caveat: for non-BigGAN classes R also narrows the field of view.
+Evidence: `results/diagnostics/history_diagnostics.csv`; paper `paper/final/`.
+
 ## Open Questions
 
 - How much of the diffusion-family separation (0.63-0.76) survives content matching (H5)?

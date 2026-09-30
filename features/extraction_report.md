@@ -1,6 +1,6 @@
 # Extraction report
 
-config `0cbe77dcdb19`; 12000 unique files, 15000 variant rows; 129 s.
+config `87f5489e9d59`; 12000 unique files, 15000 variant rows; 238 s.
 
 Checks passed: synthetic hand calculations, no NaN/Inf, rename invariance, repeat identity.
 
