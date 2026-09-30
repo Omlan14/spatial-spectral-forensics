@@ -47,3 +47,22 @@ __temp_skills_repo/
 /to_human/*
 !/to_human/README.md
 /data/images/
+
+# LaTeX build by-products
+paper/**/*.aux
+paper/**/*.log
+paper/**/*.out
+paper/**/*.bbl
+paper/**/*.blg
+
+# Local scratch and superseded drafts (final deliverables: paper/final/, presentation/)
+/$d/
+results/_tmp_*
+paper/submission/
+/OVERVIEW.md
+
+# Locally installed AI-agent tooling (not project content)
+/.agents/
+/.kilo/
+.claude/skills/defensive-writer/
+.roo/skills/defensive-writer/
