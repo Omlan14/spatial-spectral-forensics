@@ -27,6 +27,8 @@ FF, FD = ROOT / "figures" / "final", ROOT / "figures" / "deck"
 TOTAL = 13
 SECTIONS = ["Introduction", "Novelty", "Methodology", "Experiments", "Results", "Limitations", "Future"]
 PIX, FRQ, CMB = RGBColor(0x2A, 0x78, 0xD6), RGBColor(0xEB, 0x68, 0x34), RGBColor(0x1B, 0xAF, 0x7A)
+# same hues darkened for TEXT (>= 4.5:1 on white); the lighter marks stay for strokes, matching the figures
+PIX_T, FRQ_T, CMB_T = RGBColor(0x1F, 0x63, 0xB8), RGBColor(0xB5, 0x48, 0x19), RGBColor(0x0E, 0x7A, 0x53)
 ACC_TINT = RGBColor(0xFB, 0xEE, 0xF0)
 SRC = "Source: results/*.csv, results/diagnostics/ (config 87f5489e9d59)"
 
@@ -43,23 +45,45 @@ def hdr(s, active, title, member):
     for i, name in enumerate(SECTIONS):
         on = i in active
         textbox(s, M + int(w * i), Inches(0.28), int(w), Inches(0.3), name.upper(), size=10.5, bold=on,
-                color=ACCENT if on else RGBColor(0xA9, 0xB4, 0xC0), align=PP_ALIGN.CENTER)
+                color=ACCENT if on else MUTED, align=PP_ALIGN.CENTER)
         if on:
             u = s.shapes.add_shape(MSO_SHAPE.RECTANGLE, M + int(w * i) + Inches(0.25), Inches(0.6),
                                    int(w) - Inches(0.5), Emu(28575))
             u.fill.solid(); u.fill.fore_color.rgb = ACCENT; u.line.fill.background()
     ln = s.shapes.add_shape(MSO_SHAPE.RECTANGLE, M, Inches(0.62), SW - 2 * M, Emu(9525))
     ln.fill.solid(); ln.fill.fore_color.rgb = HAIR; ln.line.fill.background()
-    textbox(s, M, Inches(0.78), Inches(10.4), Inches(0.6), title, size=27, bold=True, color=PRIMARY, font=DISPLAY)
-    textbox(s, SW - M - Inches(1.8), Inches(0.9), Inches(1.8), Inches(0.3), member.upper(), size=11,
+    textbox(s, M, Inches(0.78), Inches(10.3), Inches(0.6), title, size=27, bold=True, color=PRIMARY, font=DISPLAY)
+    textbox(s, SW - M - Inches(1.5), Inches(0.9), Inches(1.5), Inches(0.3), member.upper(), size=11,
             bold=True, color=MUTED, align=PP_ALIGN.RIGHT)
+
+
+def rich(s, x, y, w, h, runs, size=18, font=BODY, spacing=1.2, align=PP_ALIGN.LEFT):
+    """One paragraph of mixed runs: (text, color, bold[, font]). Numbers go in BODY for lining figures."""
+    tf = s.shapes.add_textbox(x, y, w, h).text_frame
+    tf.word_wrap = True
+    tf.margin_left = tf.margin_right = tf.margin_top = tf.margin_bottom = 0
+    p = tf.paragraphs[0]
+    p.alignment, p.line_spacing = align, spacing
+    for t, color, bold, *f in runs:
+        r = p.add_run()
+        r.text = t
+        r.font.size, r.font.color.rgb, r.font.bold, r.font.name = Pt(size), color, bold, (f[0] if f else font)
+
+
+def flat(prs):
+    """Drop the theme style reference from every auto shape and connector, so no renderer adds the theme's
+    drop shadow; each shape already sets its own fill and line explicitly."""
+    for sl in prs.slides:
+        for sh in sl.shapes:
+            st = sh._element.find(qn("p:style"))
+            if st is not None:
+                sh._element.remove(st)
 
 
 def footer(s, n, dark=False):
     c = PAPER if dark else MUTED
     textbox(s, M, SH - Inches(0.38), Inches(9), Inches(0.26),
-            "Same score, different story - spatial-frequency features for AI-generated image detection",
-            size=10, color=c)
+            "CSE 4883 Digital Image Processing  ·  Same score, different story", size=10, color=c)
     textbox(s, SW - M - Inches(1.4), SH - Inches(0.38), Inches(1.4), Inches(0.26), f"{n} / {TOTAL}", size=10,
             color=c, align=PP_ALIGN.RIGHT)
 
@@ -114,11 +138,6 @@ def table(s, x, y, data, col_w, size=13, row_h=Inches(0.44), bold_cells=(), acce
     return shp
 
 
-def stat(s, x, y, w, number, label, color=ACCENT, size=40):
-    textbox(s, x, y, w, Inches(size / 58), number, size=size, bold=True, color=color, font=DISPLAY)
-    textbox(s, x, y + Inches(size / 58 + 0.05), w, Inches(0.6), label, size=12.5, color=MUTED, spacing=1.05)
-
-
 # ------------------------------------------------------------------------------------------ slides
 def build():
     prs = Presentation()
@@ -130,24 +149,20 @@ def build():
             color=WHITE, font=DISPLAY)
     textbox(s, M, Inches(2.75), Inches(12), Inches(1.1), "How resampling history shapes what spatial-frequency "
             "features\ndetect in AI-generated images", size=22, color=PAPER, spacing=1.1)
-    textbox(s, M, Inches(5.35), Inches(12), Inches(1.2), "CSE 4883 Digital Image Processing - final presentation\n"
-            "Member 1 - Member 2 - Member 3", size=15, color=PAPER, spacing=1.35)
-    textbox(s, M, Inches(6.55), Inches(12), Inches(0.4), "  -  ".join(SECTIONS), size=11, color=PAPER)
+    textbox(s, M, Inches(5.35), Inches(12), Inches(1.2), "CSE 4883 Digital Image Processing  ·  final presentation\n"
+            "Member 1  ·  Member 2  ·  Member 3", size=15, color=PAPER, spacing=1.35)
+    textbox(s, M, Inches(6.55), Inches(12), Inches(0.4), "   ·   ".join(SECTIONS), size=11, color=PAPER)
     notes(s, "MEMBER 1 (10 s). Good morning. We studied what simple, explainable image statistics really "
              "measure when they separate real photographs from AI-generated images. Our title is our answer: "
              "the same score can tell very different stories.")
 
     # 2 introduction: the problem -------------------------------------------------------------
     s = add_slide(prs); hdr(s, [0], "Real and fake images arrive differently", "Member 1")
-    figure(s, FD / "classes_at_native_scale.png", M, Inches(1.55), Inches(8.3), Inches(5.3),
-           caption="One GenImage test image per class, drawn at its true native size.")
-    stat(s, Inches(9.35), Inches(1.75), Inches(3.4), "1.000", "AUROC from file format + size alone -\nno pixels needed")
-    textbox(s, Inches(9.35), Inches(3.55), Inches(3.4), Inches(0.35), "So a fair pipeline must", size=14,
-            bold=True, color=PRIMARY)
-    for k, t in enumerate(["give both classes one size (256 px)", "and one format (PNG)",
-                           "→ but each class is resized by a different factor"]):
-        textbox(s, Inches(9.35), Inches(3.98 + 0.45 * k), Inches(3.4), Inches(0.4), t, size=14,
-                color=ACCENT if k == 2 else TEXT, bold=k == 2)
+    figure(s, FD / "classes_at_native_scale.png", Inches(1.2), Inches(1.5), SW - Inches(2.4), Inches(4.55))
+    rich(s, M, Inches(6.2), SW - 2 * M, Inches(0.8), [
+        ("File format and size alone separate the classes (AUROC ", TEXT, False), ("1.000", ACCENT, True),
+        ("). A fair pipeline gives every image 256 × 256 px, but ", TEXT, False),
+        ("each class is resized by a different factor.", ACCENT, True)], size=17, align=PP_ALIGN.CENTER)
     footer(s, 2)
     notes(s, "MEMBER 1 (35 s). Simple features such as edge strength or spectral band energy are popular for "
              "spotting AI images because they are cheap and explainable. We used GenImage, a standard "
@@ -161,23 +176,24 @@ def build():
     s = add_slide(prs); hdr(s, [0], "Our research question", "Member 1")
     box(s, Inches(2.2), Inches(1.6), Inches(8.9), Inches(0.95),
         [("Which simple feature set separates real from AI-generated images best?", 18, True, PRIMARY),
-         ("same processing for both classes - strict split by image group", 13, False, MUTED)], fill=TINT, line=TINT)
+         ("same processing for both classes  ·  strict split by image group", 13, False, MUTED)], fill=TINT, line=TINT)
     xs = [Inches(1.4), Inches(5.2), Inches(9.0)]
-    arms = [("Pixel-pattern", "7 features", PIX), ("Frequency", "7 features", FRQ), ("Combined", "14 features", CMB)]
-    for x, (a, b, c) in zip(xs, arms):
+    arms = [("Pixel-pattern", "7 features", PIX, PIX_T), ("Frequency", "7 features", FRQ, FRQ_T),
+            ("Combined", "14 features", CMB, CMB_T)]
+    for x, (a, b, c, ct) in zip(xs, arms):
         arrow(s, Inches(6.65), Inches(2.55), x + Inches(1.45), Inches(3.05))
-        box(s, x, Inches(3.1), Inches(2.9), Inches(0.9), [(a, 17, True, c), (b, 13, False, MUTED)], line=c, lw=2)
+        box(s, x, Inches(3.1), Inches(2.9), Inches(0.9), [(a, 17, True, ct), (b, 13, False, MUTED)], line=c, lw=2)
         arrow(s, x + Inches(1.45), Inches(4.0), Inches(6.65), Inches(4.45))
     box(s, Inches(4.4), Inches(4.5), Inches(4.5), Inches(0.62),
         [("one simple classifier for all three", 14, True, TEXT)], fill=TINT, line=TINT)
     arrow(s, Inches(5.6), Inches(5.12), Inches(3.6), Inches(5.6))
     arrow(s, Inches(7.7), Inches(5.12), Inches(9.7), Inches(5.6))
     box(s, Inches(1.4), Inches(5.62), Inches(4.4), Inches(0.9),
-        [("Stress 1: matched JPEG", 16, True, ACCENT), ("both classes at quality 90 / 75 / 50", 13, False, MUTED)],
-        line=ACCENT, lw=1.5)
+        [("Stress 1: matched JPEG", 16, True, PRIMARY), ("both classes at quality 90 / 75 / 50", 13, False, MUTED)],
+        line=PRIMARY, lw=1.5)
     box(s, Inches(7.5), Inches(5.62), Inches(4.4), Inches(0.9),
-        [("Stress 2: unseen generator", 16, True, ACCENT), ("SD v1.4 never seen in training", 13, False, MUTED)],
-        line=ACCENT, lw=1.5)
+        [("Stress 2: unseen generator", 16, True, PRIMARY), ("SD v1.4 never seen in training", 13, False, MUTED)],
+        line=PRIMARY, lw=1.5)
     footer(s, 3)
     notes(s, "MEMBER 1 (30 s). Our question: with the same processing for both classes and a strict split, "
              "which simple feature set works best? We compare three sets: seven pixel-pattern features, seven "
@@ -188,24 +204,26 @@ def build():
 
     # 4 novelty (highlighted) -----------------------------------------------------------------
     s = add_slide(prs); bg(s, ACC_TINT); hdr(s, [1], "Novelty: same score, different story", "Member 1")
-    box(s, M, Inches(1.6), Inches(4.9), Inches(2.25),
-        [("0.796 → 0.802", 40, True, PRIMARY), ("pooled AUROC when every image gets", 13, False, MUTED),
-         ("the same resampling: the score stays", 13, False, MUTED)], line=HAIR)
-    box(s, M, Inches(4.05), Inches(4.9), Inches(2.25),
-        [("-0.17 to +0.30", 40, True, ACCENT), ("change in per-generator AUROC", 13, False, MUTED),
-         ("from the same swap: the story changes", 13, False, MUTED)], line=ACCENT, lw=1.5)
+    rich(s, M, Inches(1.75), Inches(5.2), Inches(2.9), [
+        ("Give every image the same resampling. The pooled AUROC barely moves (", TEXT, False, DISPLAY),
+        ("0.796 → 0.802", PRIMARY, True), ("), but per-generator AUROC shifts by ", TEXT, False, DISPLAY),
+        ("−0.17 to +0.30", ACCENT, True), (".", TEXT, False, DISPLAY)], size=24, spacing=1.25)
+    rule_ = s.shapes.add_shape(MSO_SHAPE.RECTANGLE, M, Inches(4.75), Inches(5.2), Emu(9525))
+    rule_.fill.solid(); rule_.fill.fore_color.rgb = HAIR; rule_.line.fill.background()
+    textbox(s, M, Inches(4.95), Inches(5.2), Inches(1.3),
+            "BigGAN images are pixel-identical in both versions, so any change in BigGAN comes from the real "
+            "photos' processing alone.", size=15, color=TEXT, spacing=1.2)
     data = [["Work", "Level", "What it varies"],
             ["Grommelt et al. 2024", "whole detector", "JPEG and size bias"],
             ["B-Free 2025", "whole detector", "content, format, size"],
             ["Zhou & Wang 2026", "training-free detectors", "resize vs native, JPEG"],
-            ["This work", "14 named features", "resampling isolated\n+ matched JPEG + unseen generator"]]
-    table(s, Inches(5.85), Inches(1.6), data, [Inches(1.8), Inches(1.95), Inches(3.15)], size=12.5,
-          row_h=Inches(0.6), bold_cells={(4, 0), (4, 1), (4, 2)}, accent_cells={(4, 0), (4, 1), (4, 2)},
+            ["This work", "14 named features", "resampling (isolated), matched JPEG, unseen generator"]]
+    table(s, Inches(6.1), Inches(1.75), data, [Inches(1.6), Inches(1.9), Inches(3.13)], size=12.5,
+          row_h=Inches(0.62), bold_cells={(4, 0), (4, 1), (4, 2)}, accent_cells={(4, 0), (4, 1), (4, 2)},
           center_from=9)
-    textbox(s, Inches(5.85), Inches(5.3), Inches(6.9), Inches(1.0),
-            "The BigGAN images are pixel-identical in both versions, so any change in BigGAN comes from the "
-            "real photos' processing alone.\nWe found no report of this feature-level protocol (we do not claim 'first').",
-            size=13, color=TEXT, spacing=1.15)
+    textbox(s, Inches(6.1), Inches(5.3), Inches(6.63), Inches(0.6),
+            "We found no report of this feature-level protocol; we say “not found”, not “first”.",
+            size=13, color=MUTED, spacing=1.15)
     footer(s, 4)
     notes(s, "MEMBER 1 (45 s). This is our novelty. Earlier studies showed that whole detectors exploit format "
              "and size differences; one recent audit showed resizing changes the conclusions of training-free "
@@ -218,11 +236,11 @@ def build():
     # 5 methodology: pipeline -----------------------------------------------------------------
     s = add_slide(prs); hdr(s, [2], "Pipeline, fixed before any image was processed", "Member 2")
     figure(s, ROOT / "src" / "pipeline-diagram.png", M, Inches(1.5), Inches(4.3), Inches(5.55))
-    steps = [("3,000 GenImage images", "1,500 real  -  500 each: BigGAN, SD v1.4, ADM"),
+    steps = [("3,000 GenImage images", "1,500 real  ·  500 each: BigGAN, SD v1.4, ADM"),
              ("Clean before splitting", "duplicates, near-copies, odd colour profiles removed"),
-             ("Same processing for both classes", "resize to 256 x 256, lossless PNG"),
-             ("Three conditions", "C0 clean  -  C1 JPEG 90/75/50  -  C2 unfair control"),
-             ("Strict statistics", "split by image group  -  one locked 600-image test set  -  95% CIs")]
+             ("Same processing for both classes", "resize to 256 × 256, lossless PNG"),
+             ("Three conditions", "C0 clean  ·  C1 JPEG 90 / 75 / 50  ·  C2 unfair control"),
+             ("Strict statistics", "split by image group  ·  one locked 600-image test set  ·  95% CIs")]
     for k, (a, b) in enumerate(steps):
         y = Inches(1.7 + 1.0 * k)
         c = s.shapes.add_shape(MSO_SHAPE.OVAL, Inches(5.4), y, Inches(0.5), Inches(0.5))
@@ -283,7 +301,7 @@ def build():
         if k < 2:
             arrow(s, Inches(10.62), y + Inches(0.58), Inches(10.62), y + Inches(0.78))
     textbox(s, Inches(8.5), Inches(4.5), Inches(4.25), Inches(1.6),
-            "E1-E5 were fixed in advance.\nR was added after the results: exploratory.\n"
+            "E1–E5 were fixed in advance.\nR was added after the results: exploratory.\n"
             "BigGAN (128 px) is pixel-identical in C0 and R.", size=13, color=MUTED, spacing=1.2)
     footer(s, 7)
     notes(s, "MEMBER 2 (30 s). Each experiment answers one question. E1: is there any signal on clean images? "
@@ -294,21 +312,21 @@ def build():
              "same factor, so all images share one resampling history.")
 
     # 8 results 1: accepted pipeline matrix + controls ----------------------------------------
-    s = add_slide(prs); hdr(s, [4], "Results: combined wins pooled - not everywhere", "Member 2")
+    s = add_slide(prs); hdr(s, [4], "Results: combined wins pooled — not everywhere", "Member 2")
     figure(s, FD / "auroc_matrix.png", M, Inches(1.5), Inches(7.3), Inches(5.35),
            caption="Test AUROC (0.5 = chance). E5: SD v1.4 never seen in training, JPEG 75.", source=SRC)
     textbox(s, Inches(8.3), Inches(1.6), Inches(4.4), Inches(0.35), "Controls (every experiment)", size=15,
             bold=True, color=PRIMARY)
-    ctr = [("Always guess", "0.500"), ("Processed-file history", "0.500"), ("Shuffled labels (x200)", "0.50-0.52"),
+    ctr = [("Always guess", "0.500"), ("Processed-file history", "0.500"), ("Shuffled labels (×200)", "0.50–0.52"),
            ("Original file facts", "1.000")]
     for k, (a, b) in enumerate(ctr):
         y = Inches(2.1 + 0.52 * k)
-        textbox(s, Inches(8.3), y, Inches(3.0), Inches(0.35), a, size=14, color=TEXT)
+        textbox(s, Inches(8.3), y, Inches(2.8), Inches(0.35), a, size=14, color=TEXT)
         textbox(s, Inches(11.2), y, Inches(1.5), Inches(0.35), b, size=14, bold=True,
                 color=ACCENT if k == 3 else TEXT, align=PP_ALIGN.RIGHT)
     table(s, Inches(8.3), Inches(4.45), [["Stress", "AUROC change"],
                                         ["Matched JPEG, any arm", "at most 0.025"],
-                                        ["SD v1.4 unseen, combined", "-0.078"]],
+                                        ["SD v1.4 unseen, combined", "−0.078"]],
           [Inches(2.6), Inches(1.8)], size=13, row_h=Inches(0.48))
     footer(s, 8)
     notes(s, "MEMBER 2 (45 s). Here are the results of the accepted pipeline. The combined set has the best "
@@ -335,12 +353,14 @@ def build():
     # 10 results 3: resampling swap -----------------------------------------------------------
     s = add_slide(prs); hdr(s, [4], "Same pooled score, different story", "Member 3")
     figure(s, FF / "fig_resampling_swap.png", M, Inches(1.45), SW - 2 * M, Inches(4.35))
-    chips = [("Pooled (combined)", "0.796 → 0.802", PRIMARY), ("BigGAN (frequency)", "1.000 → 0.828", ACCENT),
-             ("Unseen SD v1.4 (pixel)", "0.477 → 0.771", CMB)]
-    cw = (SW - 2 * M - Inches(0.6)) / 3
-    for k, (a, b, c) in enumerate(chips):
-        box(s, M + int((cw + Inches(0.3)) * k), Inches(5.95), int(cw), Inches(0.9),
-            [(b, 22, True, c), (a, 12.5, False, MUTED)], line=c, lw=1.5)
+    # before -> after, one row; each value in the text colour of the arm it belongs to (matches the figure)
+    cols = [("Pooled  ·  combined arm", "0.796 → 0.802", CMB_T), ("BigGAN  ·  frequency arm", "1.000 → 0.828", FRQ_T),
+            ("Unseen SD v1.4  ·  pixel arm", "0.477 → 0.771", PIX_T)]
+    cw = (SW - 2 * M) / 3
+    for k, (a, b, c) in enumerate(cols):
+        x = M + int(cw * k)
+        textbox(s, x, Inches(5.95), int(cw), Inches(0.3), a, size=12.5, color=MUTED, align=PP_ALIGN.CENTER)
+        textbox(s, x, Inches(6.25), int(cw), Inches(0.5), b, size=24, bold=True, color=c, align=PP_ALIGN.CENTER)
     footer(s, 10)
     notes(s, "MEMBER 3 (35 s). Now the test. Open circles are the accepted pipeline, filled circles are the "
              "same-resampling version, on the same 599 test images. The pooled score does not move: 0.796 to "
@@ -354,11 +374,11 @@ def build():
     s = add_slide(prs); hdr(s, [4], "Resampling moves results more than JPEG or shift", "Member 3")
     figure(s, FF / "fig_effect_sizes.png", M, Inches(1.45), Inches(5.9), Inches(5.45),
            caption="Each dot: one feature set on one generator; tick = pooled.")
-    textbox(s, Inches(6.9), Inches(1.55), Inches(5.8), Inches(0.35), "Which arm looks stronger?  pixel - frequency",
+    textbox(s, Inches(6.9), Inches(1.55), Inches(5.8), Inches(0.35), "Which arm looks stronger?  pixel − frequency",
             size=14.5, bold=True, color=PRIMARY)
     table(s, Inches(6.9), Inches(2.0), [["Pipeline", "AUROC difference [95% CI]"],
-                                       ["Accepted resize", "-0.088 [-0.130, -0.045]"],
-                                       ["Same resampling", "+0.022 [-0.015, 0.056]"]],
+                                       ["Accepted resize", "−0.088 [−0.130, −0.045]"],
+                                       ["Same resampling", "+0.022 [−0.015, 0.056]"]],
           [Inches(2.2), Inches(3.6)], size=13.5, row_h=Inches(0.5), accent_cells={(1, 1)})
     textbox(s, Inches(6.9), Inches(3.85), Inches(5.8), Inches(0.35), "JPEG q50 on the clean model: reals flagged as fake",
             size=14.5, bold=True, color=PRIMARY)
@@ -376,7 +396,7 @@ def build():
 
     # 12 limitations → future ----------------------------------------------------------------
     s = add_slide(prs); hdr(s, [5, 6], "Limitations and planned extensions", "Member 3")
-    pairs = [("R added after results; also narrows the field of view", "pre-specified native-resolution protocol, matched field of view"),
+    pairs = [("R added after results; also narrows the field of view", "pre-specified native-resolution protocol (matched view)"),
              ("only SD v1.4 held out", "hold out each generator in turn"),
              ("real and fake content not matched", "content-matched real / fake pairs"),
              ("one JPEG encoder (Pillow 4:2:0)", "a second encoder and subsampling"),
@@ -400,23 +420,24 @@ def build():
 
     # 13 closing ------------------------------------------------------------------------------
     s = add_slide(prs); bg(s, DARK)
-    textbox(s, M, Inches(1.6), Inches(12), Inches(2.0),
+    textbox(s, M, Inches(1.6), Inches(12), Inches(1.65),
             "A pooled score cannot tell you what\nsimple features detect.", size=36, bold=True, color=WHITE,
             font=DISPLAY, spacing=1.1)
     textbox(s, M, Inches(3.35), Inches(12), Inches(0.5), "Report resampling history, and report per generator.",
             size=20, color=PAPER)
-    nums = [("0.793", "best pooled AUROC\n(combined, clean)"), ("0.629", "unseen generator\nunder JPEG 75"),
-            ("-0.17 to +0.30", "per-generator change,\nsame pooled score")]
-    for k, (a, b) in enumerate(nums):
-        x = M + Inches(4.1) * k
-        textbox(s, x, Inches(4.6), Inches(3.9), Inches(0.7), a, size=32, bold=True, color=WHITE, font=DISPLAY)
-        textbox(s, x, Inches(5.35), Inches(3.9), Inches(0.7), b, size=13, color=PAPER, spacing=1.1)
-    textbox(s, M, Inches(6.45), Inches(12), Inches(0.4), "Thank you - questions?", size=16, bold=True, color=PAPER)
+    rich(s, M, Inches(4.45), Inches(11.5), Inches(1.0), [
+        ("Combined features scored best pooled (", PAPER, False), ("0.793", WHITE, True),
+        ("; ", PAPER, False), ("0.629", WHITE, True), (" on an unseen generator under JPEG 75), yet the same "
+                                                          "pooled score hid per-generator changes of ", PAPER, False),
+        ("−0.17 to +0.30", WHITE, True), (".", PAPER, False)], size=16, spacing=1.3)
+    textbox(s, M, Inches(6.2), Inches(12), Inches(0.4), "Thank you  ·  questions?", size=18, bold=True,
+            color=WHITE, font=DISPLAY)
     footer(s, 13, dark=True)
     notes(s, "MEMBER 3 (10 s). To conclude: combined features scored best, but a pooled score cannot tell you what "
              "simple features detect. Report the resampling history and report per generator. Thank you; we "
              "are happy to take questions.")
 
+    flat(prs)
     OUT.parent.mkdir(exist_ok=True)
     prs.save(OUT)
     print(f"saved {OUT} with {len(prs.slides._sldIdLst)} slides")

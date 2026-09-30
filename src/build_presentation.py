@@ -145,7 +145,7 @@ def figure(slide, path, x, y, max_w, max_h, caption=None, source=None):
             p2 = tf.add_paragraph()
             p2.text = source
             p2.alignment = PP_ALIGN.CENTER
-            _style(p2, 12, False, RGBColor(0x8A, 0x97, 0xA5), False, BODY, PP_ALIGN.CENTER, 1.05)
+            _style(p2, 12, False, MUTED, False, BODY, PP_ALIGN.CENTER, 1.05)
     return pic
 
 
