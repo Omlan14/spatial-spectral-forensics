@@ -1,16 +1,18 @@
-"""Final course presentation (v3, 2026-09-30): 13 slides, 3 members x 2 minutes, one framing.
+"""Final course presentation (v3, 2026-09-30): 14 slides, 3 members x 2 minutes, one framing.
 
 Framing: "Same score, different story" - pooled AUROC hides that the images' resampling history decides
 which generator looks easy and which feature family looks best.
 
 Teacher guideline sections (tracker at the top of every slide):
-  Introduction (2-3) - Novelty (4, highlighted) - Methodology (5-6, diagrams) - Experiments (7)
-  - Results (8-11, tables/charts/matrices) - Limitations + Future (12)
-Member split: M1 = 1-4, M2 = 5-8, M3 = 9-13. Slides stay light; the explanation is in the speaker notes.
+  Introduction (2-3) - Novelty (4-5, the focus: positioning diagram + key-finding chart) - Methodology (6-7)
+  - Experiments (8) - Results (9-12, tables/charts/matrices) - Limitations + Future (13)
+Member split: M1 = 1-5, M2 = 6-9, M3 = 10-14. Slides stay light; the explanation is in the speaker notes.
 Design system and helpers from build_presentation.py (Georgia/Arial, ink navy, one crimson accent).
 
 Usage: python src/build_final_deck.py   (needs figures/final/ and figures/deck/; output: presentation/final_presentation.pptx)
 """
+import re
+
 from pptx import Presentation
 from pptx.dml.color import RGBColor
 from pptx.enum.shapes import MSO_CONNECTOR, MSO_SHAPE
@@ -24,7 +26,7 @@ from build_presentation import (ACCENT, BODY, DARK, DISPLAY, HAIR, M, MUTED, PAP
 
 OUT = ROOT / "presentation" / "final_presentation.pptx"
 FF, FD = ROOT / "figures" / "final", ROOT / "figures" / "deck"
-TOTAL = 13
+TOTAL = 14
 SECTIONS = ["Introduction", "Novelty", "Methodology", "Experiments", "Results", "Limitations", "Future"]
 PIX, FRQ, CMB = RGBColor(0x2A, 0x78, 0xD6), RGBColor(0xEB, 0x68, 0x34), RGBColor(0x1B, 0xAF, 0x7A)
 # same hues darkened for TEXT (>= 4.5:1 on white); the lighter marks stay for strokes, matching the figures
@@ -80,10 +82,11 @@ def flat(prs):
                 sh._element.remove(st)
 
 
-def footer(s, n, dark=False):
+def footer(s, dark=False):
     c = PAPER if dark else MUTED
     textbox(s, M, SH - Inches(0.38), Inches(9), Inches(0.26),
             "CSE 4883 Digital Image Processing  ·  Same score, different story", size=10, color=c)
+    n = int(re.search(r"slide(\d+)", str(s.part.partname)).group(1))   # position in the deck, never hand-numbered
     textbox(s, SW - M - Inches(1.4), SH - Inches(0.38), Inches(1.4), Inches(0.26), f"{n} / {TOTAL}", size=10,
             color=c, align=PP_ALIGN.RIGHT)
 
@@ -152,9 +155,8 @@ def build():
     textbox(s, M, Inches(5.35), Inches(12), Inches(1.2), "CSE 4883 Digital Image Processing  ·  final presentation\n"
             "Member 1  ·  Member 2  ·  Member 3", size=15, color=PAPER, spacing=1.35)
     textbox(s, M, Inches(6.55), Inches(12), Inches(0.4), "   ·   ".join(SECTIONS), size=11, color=PAPER)
-    notes(s, "MEMBER 1 (10 s). Good morning. We studied what simple, explainable image statistics really "
-             "measure when they separate real photographs from AI-generated images. Our title is our answer: "
-             "the same score can tell very different stories.")
+    notes(s, "MEMBER 1 (8 s). Good morning. We studied what simple, explainable image statistics really measure "
+             "when they separate real photos from AI-generated images. Our answer is in the title.")
 
     # 2 introduction: the problem -------------------------------------------------------------
     s = add_slide(prs); hdr(s, [0], "Real and fake images arrive differently", "Member 1")
@@ -163,14 +165,12 @@ def build():
         ("File format and size alone separate the classes (AUROC ", TEXT, False), ("1.000", ACCENT, True),
         ("). A fair pipeline gives every image 256 × 256 px, but ", TEXT, False),
         ("each class is resized by a different factor.", ACCENT, True)], size=17, align=PP_ALIGN.CENTER)
-    footer(s, 2)
-    notes(s, "MEMBER 1 (35 s). Simple features such as edge strength or spectral band energy are popular for "
-             "spotting AI images because they are cheap and explainable. We used GenImage, a standard "
-             "benchmark. Look at how its images arrive: real photos are JPEGs of varying size, and each "
-             "generator gives PNGs of one fixed size: 128 pixels for BigGAN, 256 for ADM, 512 for Stable "
-             "Diffusion. A classifier that only reads format and size already separates the classes perfectly. "
-             "So a fair study must give every image the same size and format. But that means BigGAN is "
-             "enlarged two times, Stable Diffusion is halved, and real photos are shrunk to about two thirds.")
+    footer(s)
+    notes(s, "MEMBER 1 (28 s). Simple features such as edge strength or spectral energy are cheap and explainable. "
+             "But look at how the GenImage benchmark delivers images: real photos are JPEGs of varying size, and "
+             "each generator gives PNGs of one fixed size. Format and size alone separate the classes perfectly. "
+             "So a fair study gives every image the same size, which means BigGAN is enlarged two times, Stable "
+             "Diffusion is halved, and real photos shrink to about two thirds.")
 
     # 3 introduction: research question -------------------------------------------------------
     s = add_slide(prs); hdr(s, [0], "Our research question", "Member 1")
@@ -194,44 +194,56 @@ def build():
     box(s, Inches(7.5), Inches(5.62), Inches(4.4), Inches(0.9),
         [("Stress 2: unseen generator", 16, True, PRIMARY), ("SD v1.4 never seen in training", 13, False, MUTED)],
         line=PRIMARY, lw=1.5)
-    footer(s, 3)
-    notes(s, "MEMBER 1 (30 s). Our question: with the same processing for both classes and a strict split, "
-             "which simple feature set works best? We compare three sets: seven pixel-pattern features, seven "
-             "frequency features, and all fourteen combined, each with the same simple classifier. Then we "
-             "stress them in two realistic ways: JPEG compression applied equally to both classes, and a "
-             "generator the classifier has never seen. Our goal is to measure what the features detect, not to "
-             "build a new detector.")
+    footer(s)
+    notes(s, "MEMBER 1 (22 s). Our question: under fair, identical processing, which simple feature set works "
+             "best? Pixel features, frequency features, or both, each with the same simple classifier, under two "
+             "stresses: matched JPEG and an unseen generator. We measure what features detect; we do not build a "
+             "new detector.")
 
-    # 4 novelty (highlighted) -----------------------------------------------------------------
-    s = add_slide(prs); bg(s, ACC_TINT); hdr(s, [1], "Novelty: same score, different story", "Member 1")
-    rich(s, M, Inches(1.75), Inches(5.2), Inches(2.9), [
-        ("Give every image the same resampling. The pooled AUROC barely moves (", TEXT, False, DISPLAY),
-        ("0.796 → 0.802", PRIMARY, True), ("), but per-generator AUROC shifts by ", TEXT, False, DISPLAY),
-        ("−0.17 to +0.30", ACCENT, True), (".", TEXT, False, DISPLAY)], size=24, spacing=1.25)
-    rule_ = s.shapes.add_shape(MSO_SHAPE.RECTANGLE, M, Inches(4.75), Inches(5.2), Emu(9525))
-    rule_.fill.solid(); rule_.fill.fore_color.rgb = HAIR; rule_.line.fill.background()
-    textbox(s, M, Inches(4.95), Inches(5.2), Inches(1.3),
-            "BigGAN images are pixel-identical in both versions, so any change in BigGAN comes from the real "
-            "photos' processing alone.", size=15, color=TEXT, spacing=1.2)
-    data = [["Work", "Level", "What it varies"],
-            ["Grommelt et al. 2024", "whole detector", "JPEG and size bias"],
-            ["B-Free 2025", "whole detector", "content, format, size"],
-            ["Zhou & Wang 2026", "training-free detectors", "resize vs native, JPEG"],
-            ["This work", "14 named features", "resampling (isolated), matched JPEG, unseen generator"]]
-    table(s, Inches(6.1), Inches(1.75), data, [Inches(1.6), Inches(1.9), Inches(3.13)], size=12.5,
-          row_h=Inches(0.62), bold_cells={(4, 0), (4, 1), (4, 2)}, accent_cells={(4, 0), (4, 1), (4, 2)},
-          center_from=9)
-    textbox(s, Inches(6.1), Inches(5.3), Inches(6.63), Inches(0.6),
-            "We found no report of this feature-level protocol; we say “not found”, not “first”.",
-            size=13, color=MUTED, spacing=1.15)
-    footer(s, 4)
-    notes(s, "MEMBER 1 (45 s). This is our novelty. Earlier studies showed that whole detectors exploit format "
-             "and size differences; one recent audit showed resizing changes the conclusions of training-free "
-             "detectors. We go one level down, to fourteen named statistics, and we isolate the cause. When we "
-             "give every image the same resampling history, the pooled score does not move, 0.796 before and "
-             "0.802 after. But per generator, results move by minus 0.17 to plus 0.30. Same score, different "
-             "story. We can pin the cause down because the BigGAN images are pixel-identical in both versions; "
-             "only the real photos changed. Member 2 will explain how we built the study.")
+    # 4 novelty 1: where this work sits --------------------------------------------------------
+    s = add_slide(prs); hdr(s, [1], "Novelty: we audit features, not detectors", "Member 1")
+    textbox(s, M, Inches(1.6), Inches(5.3), Inches(0.35), "Prior work  ·  whole detectors", size=15, bold=True,
+            color=MUTED)
+    prior = [("Grommelt et al. 2024", "JPEG and size bias"), ("B-Free 2025", "content, format, size"),
+             ("Zhou & Wang 2026", "resize vs native, JPEG")]
+    for k, (a, b) in enumerate(prior):
+        box(s, M, Inches(2.1 + 1.05 * k), Inches(5.3), Inches(0.85), [(a, 16, True, TEXT), (b, 13, False, MUTED)],
+            fill=TINT, line=TINT, align=PP_ALIGN.LEFT)
+    arrow(s, Inches(6.05), Inches(3.55), Inches(6.9), Inches(3.55), color=ACCENT, w=2.5)
+    textbox(s, Inches(5.98), Inches(2.95), Inches(1.0), Inches(0.5), "one level\ndown", size=11.5, color=MUTED,
+            align=PP_ALIGN.CENTER)
+    box(s, Inches(7.05), Inches(1.6), Inches(5.68), Inches(4.2), [("", 4, False, TEXT)], fill=WHITE,
+                line=ACCENT, lw=2)
+    textbox(s, Inches(7.35), Inches(1.8), Inches(5.1), Inches(0.45), "This work  ·  14 named features", size=19,
+            bold=True, color=ACCENT)
+    ours = [("Per feature, per generator", "which statistic moves, and for which generator"),
+            ("Two stresses, one fixed protocol", "matched JPEG  +  unseen generator"),
+            ("Mechanism isolated", "BigGAN pixels identical; only the reals' resampling changes")]
+    for k, (a, b) in enumerate(ours):
+        box(s, Inches(7.35), Inches(2.45 + 1.08 * k), Inches(5.1), Inches(0.88),
+            [(a, 16, True, PRIMARY), (b, 12.5, False, MUTED)], fill=TINT, line=TINT, align=PP_ALIGN.LEFT)
+    textbox(s, M, Inches(6.2), SW - 2 * M, Inches(0.4),
+            "No prior report of this feature-level protocol found  ·  we say “not found”, not “first”",
+            size=13, color=MUTED, align=PP_ALIGN.CENTER)
+    footer(s)
+    notes(s, "MEMBER 1 (30 s). Our novelty has two parts. First, where we work. Earlier studies, on the left, "
+             "showed that whole detectors exploit format, size or resizing differences. We go one level down, to "
+             "fourteen named statistics: we measure each feature on each generator, under matched JPEG and an "
+             "unseen generator in one fixed protocol, and we isolate the mechanism, because BigGAN's images are "
+             "pixel-identical in both of our versions.")
+
+    # 5 novelty 2: the key finding ---------------------------------------------------------------
+    s = add_slide(prs); hdr(s, [1], "Novelty: same score, different story", "Member 1")
+    figure(s, FD / "novelty_same_score.png", Inches(0.9), Inches(1.5), SW - Inches(1.8), Inches(4.6))
+    rich(s, M, Inches(6.25), SW - 2 * M, Inches(0.5), [
+        ("Pooled score: unchanged.", PRIMARY, True), ("      ", TEXT, False),
+        ("Per-generator scores: move both ways.", ACCENT, True)], size=19, align=PP_ALIGN.CENTER)
+    footer(s)
+    notes(s, "MEMBER 1 (30 s). Second, what we found. We give every image the same resampling and compare. The "
+             "grey bar is the pooled score: it does not move, 0.796 to 0.802. But per generator, BigGAN drops by "
+             "0.10, and Stable Diffusion rises, most of all when it is the unseen generator, plus 0.13. Same "
+             "score, different story. Because BigGAN's images did not change at all, its drop comes only from how "
+             "the real photos were processed. Member 2 will now show how we built the study.")
 
     # 5 methodology: pipeline -----------------------------------------------------------------
     s = add_slide(prs); hdr(s, [2], "Pipeline, fixed before any image was processed", "Member 2")
@@ -250,7 +262,7 @@ def build():
         p.runs[0].font.size, p.runs[0].font.bold, p.runs[0].font.color.rgb = Pt(15), True, WHITE
         textbox(s, Inches(6.1), y - Inches(0.02), Inches(6.6), Inches(0.32), a, size=16, bold=True, color=TEXT)
         textbox(s, Inches(6.1), y + Inches(0.32), Inches(6.6), Inches(0.3), b, size=13, color=MUTED)
-    footer(s, 5)
+    footer(s)
     notes(s, "MEMBER 2 (30 s). This is the pipeline we presented and had accepted, fixed before we processed any "
              "image. We sample 3,000 GenImage images, half real and half generated. Before splitting, we remove "
              "duplicates, near-copies and images with unusual colour profiles. Both classes then get exactly the "
@@ -270,7 +282,7 @@ def build():
             fill=TINT if k != 4 else WHITE, line=TINT if k != 4 else ACCENT, lw=1.5)
         if k < 4:
             arrow(s, x + bw + Inches(0.03), Inches(5.925), x + bw + gap - Inches(0.03), Inches(5.925))
-    footer(s, 6)
+    footer(s)
     notes(s, "MEMBER 2 (30 s). Each image becomes fourteen numbers. The pixel arm, in blue, looks at brightness "
              "statistics, edge strength from the Sobel gradient, fine detail from the Laplacian, and a high-pass "
              "residual. The frequency arm, in orange, looks at the power spectrum: how energy splits between "
@@ -303,7 +315,7 @@ def build():
     textbox(s, Inches(8.5), Inches(4.5), Inches(4.25), Inches(1.6),
             "E1–E5 were fixed in advance.\nR was added after the results: exploratory.\n"
             "BigGAN (128 px) is pixel-identical in C0 and R.", size=13, color=MUTED, spacing=1.2)
-    footer(s, 7)
+    footer(s)
     notes(s, "MEMBER 2 (30 s). Each experiment answers one question. E1: is there any signal on clean images? "
              "E2 is the unfair control where only the reals are compressed. E3 compresses both classes equally; "
              "top right you see the same patch at each JPEG quality. E4 removes Stable Diffusion from training to "
@@ -328,7 +340,7 @@ def build():
                                         ["Matched JPEG, any arm", "at most 0.025"],
                                         ["SD v1.4 unseen, combined", "−0.078"]],
           [Inches(2.6), Inches(1.8)], size=13, row_h=Inches(0.48))
-    footer(s, 8)
+    footer(s)
     notes(s, "MEMBER 2 (45 s). Here are the results of the accepted pipeline. The combined set has the best "
              "pooled score, 0.793, and stays best in every experiment. On the unseen generator under JPEG it "
              "reaches 0.629. JPEG compression barely changes the scores, and the unseen generator costs about "
@@ -342,7 +354,7 @@ def build():
            caption="Mean power spectrum per class, all images. Left: BigGAN, the only class enlarged 2x, loses energy "
                    "above 0.25 cycles/pixel. Right: with the same resampling for all, the three fake curves coincide.",
            source="Source: results/diagnostics/radial_spectra.csv")
-    footer(s, 9)
+    footer(s)
     notes(s, "MEMBER 3 (30 s). This is the mechanism. The plot shows how much energy each class has at each "
              "spatial frequency. On the left, the accepted pipeline: BigGAN, in red, drops sharply in the high "
              "band, because it is the only class our resize enlarged, and bicubic enlargement cannot create fine "
@@ -361,7 +373,7 @@ def build():
         x = M + int(cw * k)
         textbox(s, x, Inches(5.95), int(cw), Inches(0.3), a, size=12.5, color=MUTED, align=PP_ALIGN.CENTER)
         textbox(s, x, Inches(6.25), int(cw), Inches(0.5), b, size=24, bold=True, color=c, align=PP_ALIGN.CENTER)
-    footer(s, 10)
+    footer(s)
     notes(s, "MEMBER 3 (35 s). Now the test. Open circles are the accepted pipeline, filled circles are the "
              "same-resampling version, on the same 599 test images. The pooled score does not move: 0.796 to "
              "0.802. But BigGAN falls from 1.000 to 0.828 with frequency features, even though its images did "
@@ -387,7 +399,7 @@ def build():
                                        ["Frequency", "14 / 300", "16 / 300"],
                                        ["Combined", "37 / 300", "42 / 300"]],
           [Inches(2.2), Inches(1.8), Inches(1.8)], size=13.5, row_h=Inches(0.48), accent_cells={(1, 2)})
-    footer(s, 11)
+    footer(s)
     notes(s, "MEMBER 3 (30 s). This chart compares all changes side by side. JPEG moves scores within about 0.1, removing a generator spreads them over 0.22, and changing only the resampling spreads them "
              "over 0.40. It even changes which feature family looks stronger: frequency beats pixel under the "
              "accepted resize, but the difference disappears with matched resampling. One practical warning "
@@ -411,7 +423,7 @@ def build():
         arrow(s, M + Inches(5.5), y + Inches(0.35), Inches(7.25), y + Inches(0.35), color=MUTED)
         box(s, Inches(7.35), y, Inches(5.4), Inches(0.7), [(b, 14, False, TEXT)], fill=TINT, line=TINT,
             align=PP_ALIGN.LEFT)
-    footer(s, 12)
+    footer(s)
     notes(s, "MEMBER 3 (25 s). Our claims are bounded, and each limitation points to a planned extension. The "
              "resampling test was added after the results and also narrows the field of view, so next we would "
              "fix a native-resolution protocol in advance. We held out only one generator, the content of real "
@@ -432,7 +444,7 @@ def build():
         ("−0.17 to +0.30", WHITE, True), (".", PAPER, False)], size=16, spacing=1.3)
     textbox(s, M, Inches(6.2), Inches(12), Inches(0.4), "Thank you  ·  questions?", size=18, bold=True,
             color=WHITE, font=DISPLAY)
-    footer(s, 13, dark=True)
+    footer(s, dark=True)
     notes(s, "MEMBER 3 (10 s). To conclude: combined features scored best, but a pooled score cannot tell you what "
              "simple features detect. Report the resampling history and report per generator. Thank you; we "
              "are happy to take questions.")

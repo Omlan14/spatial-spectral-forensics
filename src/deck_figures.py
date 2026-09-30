@@ -182,4 +182,37 @@ for a, cond, title in ((axs[0], "C0", "Accepted resize (C0)"), (axs[1], "R", "Sa
 axs[0].set_ylabel("mean log10 relative power")
 axs[0].legend(loc="lower left", frameon=False, fontsize=10)
 save(fig, "radial_spectra")
+
+# ------------------------------------------------------------------ novelty: same score, different story
+D = pd.read_csv(ROOT / "results" / "diagnostics" / "history_diagnostics.csv")
+D = D[(D.diagnostic == "D1") & (D.comparison == "combined")].set_index(["exp", "subset"])
+rows = [("E1", "all", "Pooled  (all test images)"), ("E1", "biggan", "BigGAN"), ("E1", "sd_v1_4", "SD v1.4"),
+        ("E1", "adm", "ADM"), ("E4", "sd_v1_4", "SD v1.4  (unseen in training)")]
+assert abs(D.loc[("E1", "all")].delta - 0.006) < 5e-4 and abs(D.loc[("E1", "biggan")].delta + 0.104) < 5e-4
+fig, ax = plt.subplots(figsize=(10, 4.3))
+for k, (e, sub, lab) in enumerate(rows):
+    r = D.loc[(e, sub)]
+    y = len(rows) - 1 - k
+    col = "#8a8f96" if sub == "all" else ("#b2182b" if r.delta < 0 else "#1f3a5f")
+    ax.barh(y, r.delta, height=0.56, color=col, zorder=2)
+    ax.plot([r.delta_lo, r.delta_hi], [y, y], color="#333", lw=1.2, zorder=3)
+    for xx in (r.delta_lo, r.delta_hi):
+        ax.plot([xx, xx], [y - 0.1, y + 0.1], color="#333", lw=1.2, zorder=3)
+    side = r.delta_hi + 0.012 if r.delta >= 0 else r.delta_lo - 0.012
+    ax.text(side, y, f"{r.delta:+.3f}".replace("-", "−"), va="center", ha="left" if r.delta >= 0 else "right",
+            fontsize=15, fontweight="bold", color=col if sub != "all" else "#333")
+    ax.text(1.02, y, f"{r.auroc_C0:.3f} → {r.auroc_R:.3f}", va="center", ha="left", fontsize=11.5, color="#5d6d7e",
+            transform=ax.get_yaxis_transform())
+    if sub == "all":
+        ax.axhspan(y - 0.45, y + 0.45, color="#f2f4f6", zorder=0)
+ax.axvline(0, color="#333", lw=1)
+ax.set_yticks(range(len(rows)), [r[2] for r in rows][::-1], fontsize=13)
+ax.set_xlim(-0.22, 0.30)
+ax.set_xlabel("Change in AUROC when every image gets the same resampling  (combined features, 95% CI)", fontsize=11)
+ax.text(1.02, len(rows) - 0.35, "AUROC  C0 → R", ha="left", fontsize=10.5, color="#5d6d7e", fontweight="bold",
+        transform=ax.get_yaxis_transform())
+ax.tick_params(axis="y", length=0)
+ax.spines["left"].set_visible(False)
+ax.grid(axis="x", color="#e6e6e6", lw=0.6)
+save(fig, "novelty_same_score")
 print("deck figures written to", FIG)
