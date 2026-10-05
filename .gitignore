@@ -66,3 +66,6 @@ paper/submission/
 /.kilo/
 .claude/skills/defensive-writer/
 .roo/skills/defensive-writer/
+
+# Office lock files
+~$*.pptx

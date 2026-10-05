@@ -1,0 +1,24 @@
+{
+  "workflow": "direct review; no Ralph runtime activated",
+  "iteration": 2,
+  "method": "PDF contact-sheet inspection; visual-verdict skill unavailable",
+  "original_verdict": "needs claim and timing corrections",
+  "findings": [
+    "14 slides; 383 seconds in notes",
+    "causal wording overstates BigGAN classifier isolation",
+    "pooled equality and frequency superiority need qualification"
+  ],
+  "rehearsal_render_pages": 14,
+  "rehearsal_verdict": "pass with actual spoken timing unverified",
+  "validation": [
+    "PPTX rebuilt and PDF rendered",
+    "11 main slides and 3 bounded backups",
+    "110 seconds per member; 330 seconds total planned",
+    "E1/E5 AUROC recomputed; 500 BigGAN feature identities checked"
+  ],
+  "remaining_limits": [
+    "presenter names pending",
+    "actual aloud timing not measured",
+    "original paper causal wording remains flagged in review"
+  ]
+}

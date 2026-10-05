@@ -1,0 +1,91 @@
+{
+  "method": "AUROC independently recomputed from saved per-image predictions; no retraining",
+  "headline_checks": [
+    {
+      "experiment": "E1",
+      "arm": "pixel",
+      "subset": "all",
+      "n": 600,
+      "auroc": 0.6655777777777778
+    },
+    {
+      "experiment": "E1",
+      "arm": "pixel",
+      "subset": "sd_v1_4",
+      "n": 400,
+      "auroc": 0.5814666666666667
+    },
+    {
+      "experiment": "E1",
+      "arm": "frequency",
+      "subset": "all",
+      "n": 600,
+      "auroc": 0.7525000000000001
+    },
+    {
+      "experiment": "E1",
+      "arm": "frequency",
+      "subset": "sd_v1_4",
+      "n": 400,
+      "auroc": 0.6371666666666667
+    },
+    {
+      "experiment": "E1",
+      "arm": "combined",
+      "subset": "all",
+      "n": 600,
+      "auroc": 0.7934666666666668
+    },
+    {
+      "experiment": "E1",
+      "arm": "combined",
+      "subset": "sd_v1_4",
+      "n": 400,
+      "auroc": 0.7118
+    },
+    {
+      "experiment": "E5",
+      "arm": "pixel",
+      "subset": "all",
+      "n": 600,
+      "auroc": 0.6308666666666667
+    },
+    {
+      "experiment": "E5",
+      "arm": "pixel",
+      "subset": "sd_v1_4",
+      "n": 400,
+      "auroc": 0.4651333333333333
+    },
+    {
+      "experiment": "E5",
+      "arm": "frequency",
+      "subset": "all",
+      "n": 600,
+      "auroc": 0.7689333333333332
+    },
+    {
+      "experiment": "E5",
+      "arm": "frequency",
+      "subset": "sd_v1_4",
+      "n": 400,
+      "auroc": 0.5683666666666667
+    },
+    {
+      "experiment": "E5",
+      "arm": "combined",
+      "subset": "all",
+      "n": 600,
+      "auroc": 0.7864333333333333
+    },
+    {
+      "experiment": "E5",
+      "arm": "combined",
+      "subset": "sd_v1_4",
+      "n": 400,
+      "auroc": 0.6293000000000001
+    }
+  ],
+  "biggan_R_C0_feature_identity": true,
+  "n_biggan_checked": 500
+}
